@@ -33,7 +33,6 @@ from ._ast import SpannedPriceOperator
 from ._ast import SpannedStr
 from ._ast import Tag
 from ._ast import Transaction
-from ._ast import TransactionExtra
 from ._ast import parse_file
 from ._ast import parse_string
 
@@ -73,7 +72,6 @@ __all__ = [
     "SpannedStr",
     "Tag",
     "Transaction",
-    "TransactionExtra",
     "parse_file",
     "parse_string",
 ]

@@ -38,7 +38,6 @@ fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyBalance>()?;
     m.add_class::<PyPad>()?;
     m.add_class::<PyTransaction>()?;
-    m.add_class::<PyTransactionExtra>()?;
     m.add_class::<PyCommodity>()?;
     m.add_class::<PyPrice>()?;
     m.add_class::<PyEvent>()?;
@@ -274,13 +273,6 @@ struct PyTransaction {
     tags: Vec<Py<PySpannedStr>>,
     links: Vec<Py<PySpannedStr>>,
     comment: Option<Py<PySpannedStr>>,
-    extra: Py<PyTransactionExtra>,
-}
-
-#[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
-#[pyclass(module = "beancount_ast._ast", name = "TransactionExtra", get_all)]
-struct PyTransactionExtra {
     tags_links_lines: Vec<Py<PySpannedStr>>,
     comments: Vec<Py<PySpannedStr>>,
     key_values: Vec<Py<PyKeyValue>>,
@@ -997,16 +989,6 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .map(|p| posting_to_py(py, p))
                 .collect::<PyResult<Vec<_>>>()?;
 
-            let extra = Py::new(
-                py,
-                PyTransactionExtra {
-                    tags_links_lines,
-                    comments,
-                    key_values,
-                    postings,
-                },
-            )?;
-
             PyTransaction {
                 meta,
                 span,
@@ -1018,7 +1000,10 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 tags,
                 links,
                 comment,
-                extra,
+                tags_links_lines,
+                comments,
+                key_values,
+                postings,
             }
             .into_py_any(py)?
         }

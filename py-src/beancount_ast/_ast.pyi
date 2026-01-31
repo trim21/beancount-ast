@@ -42,7 +42,6 @@ __all__ = [
     "SpannedStr",
     "Tag",
     "Transaction",
-    "TransactionExtra",
     "parse_file",
     "parse_string",
 ]
@@ -518,11 +517,6 @@ class Transaction:
     def links(self) -> builtins.list[SpannedStr]: ...
     @property
     def comment(self) -> typing.Optional[SpannedStr]: ...
-    @property
-    def extra(self) -> TransactionExtra: ...
-
-@typing.final
-class TransactionExtra:
     @property
     def tags_links_lines(self) -> builtins.list[SpannedStr]: ...
     @property
