@@ -1,4 +1,24 @@
 # serializer version: 1
+# name: test_dump_string_mixed_directives_snapshot
+  list([
+    '; comment line',
+    'option "title" "Demo"',
+    '2020-01-01 open Assets:Cash USD',
+    '2020-01-02 balance Assets:Cash 100 USD',
+    '''
+      2020-01-03 * "Payee" "Narration"
+        Assets:Cash -10 USD
+        Expenses:Food 10 USD
+    ''',
+    '2020-01-04 price USD 1.23 EUR',
+    '2020-01-05 event "location" "NYC"',
+    '2020-01-06 note Assets:Cash "ATM withdrawal"',
+    '2020-01-07 custom "x" "y"',
+    'plugin "beancount.plugins.auto_accounts"',
+    'include "other.bean"',
+    '2020-12-31 close Assets:Cash',
+  ])
+# ---
 # name: test_parse_string_error_snapshot
   'bad.bean:1:1: unexpected node `ERROR`'
 # ---

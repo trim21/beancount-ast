@@ -31,7 +31,7 @@ def _prepend_to_path(env: dict[str, str]) -> None:
 
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
-    manifest = repo_root / "crates" / "ast-py" / "Cargo.toml"
+    manifest = repo_root / "Cargo.toml"
 
     if not manifest.exists():
         raise SystemExit(f"Missing manifest: {manifest}")
