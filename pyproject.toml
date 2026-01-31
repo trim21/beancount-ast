@@ -1,0 +1,28 @@
+[build-system]
+requires = ["maturin>=1,<2"]
+build-backend = "maturin"
+
+[project]
+name = "beancount_ast"
+description = "Parse Beancount content into AST"
+readme = "README.md"
+requires-python = ">=3.10"
+version = '0.0.1'
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-q"]
+
+[tool.uv]
+package = false
+
+[tool.maturin]
+manifest-path = "Cargo.toml"
+module-name = "beancount_ast._ast"
+bindings = "pyo3"
+python-source = "py-src"
+strip = true
+
+[dependency-groups]
+dev = ["syrupy>=4", "pytest>=9.0.2"]
