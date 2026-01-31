@@ -10,7 +10,7 @@
   - Converts Rust parser nodes (`beancount_parser::ast::*`) into `Py*` structs.
   - Public Python entrypoints are `parse_string` and `parse_file`.
 - `py-src/beancount_ast/__init__.py`: re-exports symbols from `beancount_ast._ast`.
-- `py-src/beancount_ast/_ast.pyi`: generated stubs (do not hand-edit).
+- `py-src/beancount_ast/_ast.pyi`: stubs of `src/lib.rs`, when you change any interface, you should also update it.
 - `tests/test_parse_snapshots.py`: snapshot-style API tests using `pytest` + `syrupy`.
 
 ## Workflows (local + CI-aligned)

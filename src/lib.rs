@@ -7,13 +7,17 @@ use pyderive::*;
 use pyo3::IntoPyObjectExt;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use pyo3::types::{PyList, PyModule};
+use pyo3::types::PyModule;
+use std::fmt;
 
 #[pymodule(name = "_ast")]
 fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     const VERSION: &str = env!("CARGO_PKG_VERSION");
 
     m.add("__version__", VERSION)?;
+
+    // File container
+    m.add_class::<PyFile>()?;
 
     // Core building blocks
     m.add_class::<PySpan>()?;
@@ -60,7 +64,26 @@ fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     Ok(())
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, PyNew, PyRepr, PyStr, PyEq)]
+#[derive(PyNew, PyRepr, PyStr)]
+#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
+#[pyclass(module = "beancount_ast._ast", name = "File", get_all)]
+struct PyFile {
+    filename: String,
+    content: String,
+    directives: Vec<Py<PyAny>>, // mixed directive types
+}
+
+impl fmt::Debug for PyFile {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("File")
+            .field("filename", &self.filename)
+            .field("content_len", &self.content.len())
+            .field("directives_len", &self.directives.len())
+            .finish()
+    }
+}
+
+#[derive(Clone, PartialEq, Eq, Hash, PyNew, PyRepr, PyStr, PyEq)]
 #[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Span", get_all)]
 struct PySpan {
@@ -82,6 +105,7 @@ struct PyMeta {
 #[pyclass(module = "beancount_ast._ast", name = "SpannedStr", get_all)]
 struct PySpannedStr {
     span: Py<PySpan>,
+    file: Py<PyFile>,
     content: String,
 }
 
@@ -90,6 +114,7 @@ struct PySpannedStr {
 #[pyclass(module = "beancount_ast._ast", name = "SpannedBool", get_all)]
 struct PySpannedBool {
     span: Py<PySpan>,
+    file: Py<PyFile>,
     content: bool,
 }
 
@@ -107,6 +132,7 @@ struct PyKeyValueValue {
 #[pyclass(module = "beancount_ast._ast", name = "SpannedKeyValueValue", get_all)]
 struct PySpannedKeyValueValue {
     span: Py<PySpan>,
+    file: Py<PyFile>,
     content: Py<PyKeyValueValue>,
 }
 
@@ -116,6 +142,7 @@ struct PySpannedKeyValueValue {
 struct PyKeyValue {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     key: Py<PySpannedStr>,
     value: Option<Py<PySpannedKeyValueValue>>,
 }
@@ -125,6 +152,7 @@ struct PyKeyValue {
 #[pyclass(module = "beancount_ast._ast", name = "SpannedBinaryOp", get_all)]
 struct PySpannedBinaryOp {
     span: Py<PySpan>,
+    file: Py<PyFile>,
     content: String,
 }
 
@@ -134,6 +162,7 @@ struct PySpannedBinaryOp {
 struct PyNumberExpr {
     kind: String,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     literal: Option<Py<PySpannedStr>>,
     left: Option<Py<PyNumberExpr>>,
     op: Option<Py<PySpannedBinaryOp>>,
@@ -175,6 +204,7 @@ struct PyCostSpec {
 #[pyclass(module = "beancount_ast._ast", name = "SpannedPriceOperator", get_all)]
 struct PySpannedPriceOperator {
     span: Py<PySpan>,
+    file: Py<PyFile>,
     content: String,
 }
 
@@ -184,6 +214,7 @@ struct PySpannedPriceOperator {
 struct PyPosting {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     opt_flag: Option<Py<PySpannedStr>>,
     account: Py<PySpannedStr>,
     amount: Option<Py<PyAmount>>,
@@ -212,6 +243,7 @@ struct PyCustomValue {
 struct PyOpen {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     account: Py<PySpannedStr>,
     currencies: Vec<Py<PySpannedStr>>,
@@ -226,6 +258,7 @@ struct PyOpen {
 struct PyClose {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     account: Py<PySpannedStr>,
     comment: Option<Py<PySpannedStr>>,
@@ -238,6 +271,7 @@ struct PyClose {
 struct PyBalance {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     account: Py<PySpannedStr>,
     amount: Py<PyAmount>,
@@ -252,6 +286,7 @@ struct PyBalance {
 struct PyPad {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     account: Py<PySpannedStr>,
     from_account: Py<PySpannedStr>,
@@ -265,6 +300,7 @@ struct PyPad {
 struct PyTransaction {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     txn: Option<Py<PySpannedStr>>,
     payee: Option<Py<PySpannedStr>>,
@@ -285,6 +321,7 @@ struct PyTransaction {
 struct PyCommodity {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     currency: Py<PySpannedStr>,
     comment: Option<Py<PySpannedStr>>,
@@ -297,6 +334,7 @@ struct PyCommodity {
 struct PyPrice {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     currency: Py<PySpannedStr>,
     amount: Py<PyAmount>,
@@ -310,6 +348,7 @@ struct PyPrice {
 struct PyEvent {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     event_type: Py<PySpannedStr>,
     desc: Py<PySpannedStr>,
@@ -323,6 +362,7 @@ struct PyEvent {
 struct PyQuery {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     name: Py<PySpannedStr>,
     query: Py<PySpannedStr>,
@@ -336,6 +376,7 @@ struct PyQuery {
 struct PyNote {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     account: Py<PySpannedStr>,
     note: Py<PySpannedStr>,
@@ -349,6 +390,7 @@ struct PyNote {
 struct PyDocument {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     account: Py<PySpannedStr>,
     filename: Py<PySpannedStr>,
@@ -365,6 +407,7 @@ struct PyDocument {
 struct PyCustom {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     date: Py<PySpannedStr>,
     name: Py<PySpannedStr>,
     values: Vec<Py<PyCustomValue>>,
@@ -378,6 +421,7 @@ struct PyCustom {
 struct PyOption {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     key: Py<PySpannedStr>,
     value: Py<PySpannedStr>,
 }
@@ -388,6 +432,7 @@ struct PyOption {
 struct PyInclude {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     filename: Py<PySpannedStr>,
 }
 
@@ -397,6 +442,7 @@ struct PyInclude {
 struct PyPlugin {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     name: Py<PySpannedStr>,
     config: Option<Py<PySpannedStr>>,
 }
@@ -407,6 +453,7 @@ struct PyPlugin {
 struct PyTagDirective {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     tag: Py<PySpannedStr>,
     action: String,
 }
@@ -417,6 +464,7 @@ struct PyTagDirective {
 struct PyPushMeta {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     key: Py<PySpannedStr>,
     value: Option<Py<PySpannedKeyValueValue>>,
 }
@@ -427,6 +475,7 @@ struct PyPushMeta {
 struct PyPopMeta {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     key: Py<PySpannedStr>,
 }
 
@@ -436,6 +485,7 @@ struct PyPopMeta {
 struct PyComment {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     text: Py<PySpannedStr>,
 }
 
@@ -445,6 +495,7 @@ struct PyComment {
 struct PyHeadline {
     meta: Py<PyMeta>,
     span: Py<PySpan>,
+    file: Py<PyFile>,
     text: Py<PySpannedStr>,
 }
 
@@ -471,23 +522,33 @@ fn meta_to_py(py: Python<'_>, meta: ast::Meta) -> PyResult<Py<PyMeta>> {
     )
 }
 
-fn spanned_str_to_py(py: Python<'_>, ws: ast::WithSpan<&str>) -> PyResult<Py<PySpannedStr>> {
+fn spanned_str_to_py(
+    py: Python<'_>,
+    ws: ast::WithSpan<&str>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PySpannedStr>> {
     let span = span_to_py(py, ws.span)?;
     Py::new(
         py,
         PySpannedStr {
             span,
+            file: file.clone_ref(py),
             content: ws.content.to_owned(),
         },
     )
 }
 
-fn spanned_bool_to_py(py: Python<'_>, ws: ast::WithSpan<bool>) -> PyResult<Py<PySpannedBool>> {
+fn spanned_bool_to_py(
+    py: Python<'_>,
+    ws: ast::WithSpan<bool>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PySpannedBool>> {
     let span = span_to_py(py, ws.span)?;
     Py::new(
         py,
         PySpannedBool {
             span,
+            file: file.clone_ref(py),
             content: ws.content,
         },
     )
@@ -544,18 +605,30 @@ fn key_value_value_to_py(
 fn spanned_key_value_value_to_py(
     py: Python<'_>,
     ws: ast::WithSpan<ast::KeyValueValue<'_>>,
+    file: &Py<PyFile>,
 ) -> PyResult<Py<PySpannedKeyValueValue>> {
     let span = span_to_py(py, ws.span)?;
     let content = key_value_value_to_py(py, ws.content)?;
-    Py::new(py, PySpannedKeyValueValue { span, content })
+    Py::new(
+        py,
+        PySpannedKeyValueValue {
+            span,
+            file: file.clone_ref(py),
+            content,
+        },
+    )
 }
 
-fn key_value_to_py(py: Python<'_>, kv: ast::KeyValue<'_>) -> PyResult<Py<PyKeyValue>> {
+fn key_value_to_py(
+    py: Python<'_>,
+    kv: ast::KeyValue<'_>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PyKeyValue>> {
     let meta = meta_to_py(py, kv.meta)?;
     let span = span_to_py(py, kv.span)?;
-    let key = spanned_str_to_py(py, kv.key)?;
+    let key = spanned_str_to_py(py, kv.key, file)?;
     let value = match kv.value {
-        Some(v) => Some(spanned_key_value_value_to_py(py, v)?),
+        Some(v) => Some(spanned_key_value_value_to_py(py, v, file)?),
         None => None,
     };
 
@@ -564,6 +637,7 @@ fn key_value_to_py(py: Python<'_>, kv: ast::KeyValue<'_>) -> PyResult<Py<PyKeyVa
         PyKeyValue {
             meta,
             span,
+            file: file.clone_ref(py),
             key,
             value,
         },
@@ -573,6 +647,7 @@ fn key_value_to_py(py: Python<'_>, kv: ast::KeyValue<'_>) -> PyResult<Py<PyKeyVa
 fn spanned_binary_op_to_py(
     py: Python<'_>,
     ws: ast::WithSpan<ast::BinaryOp>,
+    file: &Py<PyFile>,
 ) -> PyResult<Py<PySpannedBinaryOp>> {
     let span = span_to_py(py, ws.span)?;
     let content = match ws.content {
@@ -585,12 +660,17 @@ fn spanned_binary_op_to_py(
         py,
         PySpannedBinaryOp {
             span,
+            file: file.clone_ref(py),
             content: content.to_owned(),
         },
     )
 }
 
-fn number_expr_to_py(py: Python<'_>, expr: ast::NumberExpr<'_>) -> PyResult<Py<PyNumberExpr>> {
+fn number_expr_to_py(
+    py: Python<'_>,
+    expr: ast::NumberExpr<'_>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PyNumberExpr>> {
     match expr {
         ast::NumberExpr::Missing { span } => {
             let span = span_to_py(py, span)?;
@@ -599,6 +679,7 @@ fn number_expr_to_py(py: Python<'_>, expr: ast::NumberExpr<'_>) -> PyResult<Py<P
                 PyNumberExpr {
                     kind: "Missing".to_owned(),
                     span,
+                    file: file.clone_ref(py),
                     literal: None,
                     left: None,
                     op: None,
@@ -608,12 +689,13 @@ fn number_expr_to_py(py: Python<'_>, expr: ast::NumberExpr<'_>) -> PyResult<Py<P
         }
         ast::NumberExpr::Literal(ws) => {
             let span = span_to_py(py, ws.span)?;
-            let literal = Some(spanned_str_to_py(py, ws)?);
+            let literal = Some(spanned_str_to_py(py, ws, file)?);
             Py::new(
                 py,
                 PyNumberExpr {
                     kind: "Literal".to_owned(),
                     span,
+                    file: file.clone_ref(py),
                     literal,
                     left: None,
                     op: None,
@@ -628,14 +710,15 @@ fn number_expr_to_py(py: Python<'_>, expr: ast::NumberExpr<'_>) -> PyResult<Py<P
             right,
         } => {
             let span = span_to_py(py, span)?;
-            let left = Some(number_expr_to_py(py, *left)?);
-            let op = Some(spanned_binary_op_to_py(py, op)?);
-            let right = Some(number_expr_to_py(py, *right)?);
+            let left = Some(number_expr_to_py(py, *left, file)?);
+            let op = Some(spanned_binary_op_to_py(py, op, file)?);
+            let right = Some(number_expr_to_py(py, *right, file)?);
             Py::new(
                 py,
                 PyNumberExpr {
                     kind: "Binary".to_owned(),
                     span,
+                    file: file.clone_ref(py),
                     literal: None,
                     left,
                     op,
@@ -646,11 +729,11 @@ fn number_expr_to_py(py: Python<'_>, expr: ast::NumberExpr<'_>) -> PyResult<Py<P
     }
 }
 
-fn amount_to_py(py: Python<'_>, amt: ast::Amount<'_>) -> PyResult<Py<PyAmount>> {
-    let raw = spanned_str_to_py(py, amt.raw)?;
-    let number = number_expr_to_py(py, amt.number)?;
+fn amount_to_py(py: Python<'_>, amt: ast::Amount<'_>, file: &Py<PyFile>) -> PyResult<Py<PyAmount>> {
+    let raw = spanned_str_to_py(py, amt.raw, file)?;
+    let number = number_expr_to_py(py, amt.number, file)?;
     let currency = match amt.currency {
-        Some(c) => Some(spanned_str_to_py(py, c)?),
+        Some(c) => Some(spanned_str_to_py(py, c, file)?),
         None => None,
     };
     Py::new(
@@ -663,17 +746,21 @@ fn amount_to_py(py: Python<'_>, amt: ast::Amount<'_>) -> PyResult<Py<PyAmount>> 
     )
 }
 
-fn cost_amount_to_py(py: Python<'_>, ca: ast::CostAmount<'_>) -> PyResult<Py<PyCostAmount>> {
+fn cost_amount_to_py(
+    py: Python<'_>,
+    ca: ast::CostAmount<'_>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PyCostAmount>> {
     let per = match ca.per {
-        Some(p) => Some(number_expr_to_py(py, p)?),
+        Some(p) => Some(number_expr_to_py(py, p, file)?),
         None => None,
     };
     let total = match ca.total {
-        Some(t) => Some(number_expr_to_py(py, t)?),
+        Some(t) => Some(number_expr_to_py(py, t, file)?),
         None => None,
     };
     let currency = match ca.currency {
-        Some(c) => Some(spanned_str_to_py(py, c)?),
+        Some(c) => Some(spanned_str_to_py(py, c, file)?),
         None => None,
     };
     Py::new(
@@ -686,25 +773,29 @@ fn cost_amount_to_py(py: Python<'_>, ca: ast::CostAmount<'_>) -> PyResult<Py<PyC
     )
 }
 
-fn cost_spec_to_py(py: Python<'_>, cs: ast::CostSpec<'_>) -> PyResult<Py<PyCostSpec>> {
-    let raw = spanned_str_to_py(py, cs.raw)?;
+fn cost_spec_to_py(
+    py: Python<'_>,
+    cs: ast::CostSpec<'_>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PyCostSpec>> {
+    let raw = spanned_str_to_py(py, cs.raw, file)?;
     let amount = match cs.amount {
-        Some(a) => Some(cost_amount_to_py(py, a)?),
+        Some(a) => Some(cost_amount_to_py(py, a, file)?),
         None => None,
     };
     let date = match cs.date {
-        Some(d) => Some(spanned_str_to_py(py, d)?),
+        Some(d) => Some(spanned_str_to_py(py, d, file)?),
         None => None,
     };
     let label = match cs.label {
-        Some(l) => Some(spanned_str_to_py(py, l)?),
+        Some(l) => Some(spanned_str_to_py(py, l, file)?),
         None => None,
     };
     let merge = match cs.merge {
-        Some(m) => Some(spanned_bool_to_py(py, m)?),
+        Some(m) => Some(spanned_bool_to_py(py, m, file)?),
         None => None,
     };
-    let is_total = spanned_bool_to_py(py, cs.is_total)?;
+    let is_total = spanned_bool_to_py(py, cs.is_total, file)?;
     Py::new(
         py,
         PyCostSpec {
@@ -721,6 +812,7 @@ fn cost_spec_to_py(py: Python<'_>, cs: ast::CostSpec<'_>) -> PyResult<Py<PyCostS
 fn spanned_price_operator_to_py(
     py: Python<'_>,
     ws: ast::WithSpan<ast::PriceOperator>,
+    file: &Py<PyFile>,
 ) -> PyResult<Py<PySpannedPriceOperator>> {
     let span = span_to_py(py, ws.span)?;
     let content = match ws.content {
@@ -731,42 +823,43 @@ fn spanned_price_operator_to_py(
         py,
         PySpannedPriceOperator {
             span,
+            file: file.clone_ref(py),
             content: content.to_owned(),
         },
     )
 }
 
-fn posting_to_py(py: Python<'_>, p: ast::Posting<'_>) -> PyResult<Py<PyPosting>> {
+fn posting_to_py(py: Python<'_>, p: ast::Posting<'_>, file: &Py<PyFile>) -> PyResult<Py<PyPosting>> {
     let meta = meta_to_py(py, p.meta)?;
     let span = span_to_py(py, p.span)?;
     let opt_flag = match p.opt_flag {
-        Some(f) => Some(spanned_str_to_py(py, f)?),
+        Some(f) => Some(spanned_str_to_py(py, f, file)?),
         None => None,
     };
-    let account = spanned_str_to_py(py, p.account)?;
+    let account = spanned_str_to_py(py, p.account, file)?;
     let amount = match p.amount {
-        Some(a) => Some(amount_to_py(py, a)?),
+        Some(a) => Some(amount_to_py(py, a, file)?),
         None => None,
     };
     let cost_spec = match p.cost_spec {
-        Some(cs) => Some(cost_spec_to_py(py, cs)?),
+        Some(cs) => Some(cost_spec_to_py(py, cs, file)?),
         None => None,
     };
     let price_operator = match p.price_operator {
-        Some(po) => Some(spanned_price_operator_to_py(py, po)?),
+        Some(po) => Some(spanned_price_operator_to_py(py, po, file)?),
         None => None,
     };
     let price_annotation = match p.price_annotation {
-        Some(pa) => Some(amount_to_py(py, pa)?),
+        Some(pa) => Some(amount_to_py(py, pa, file)?),
         None => None,
     };
     let comment = match p.comment {
-        Some(c) => Some(spanned_str_to_py(py, c)?),
+        Some(c) => Some(spanned_str_to_py(py, c, file)?),
         None => None,
     };
     let mut key_values = Vec::with_capacity(p.key_values.len());
     for kv in p.key_values {
-        key_values.push(key_value_to_py(py, kv)?);
+        key_values.push(key_value_to_py(py, kv, file)?);
     }
 
     Py::new(
@@ -774,6 +867,7 @@ fn posting_to_py(py: Python<'_>, p: ast::Posting<'_>) -> PyResult<Py<PyPosting>>
         PyPosting {
             meta,
             span,
+            file: file.clone_ref(py),
             opt_flag,
             account,
             amount,
@@ -786,8 +880,12 @@ fn posting_to_py(py: Python<'_>, p: ast::Posting<'_>) -> PyResult<Py<PyPosting>>
     )
 }
 
-fn custom_value_to_py(py: Python<'_>, v: ast::CustomValue<'_>) -> PyResult<Py<PyCustomValue>> {
-    let raw = spanned_str_to_py(py, v.raw)?;
+fn custom_value_to_py(
+    py: Python<'_>,
+    v: ast::CustomValue<'_>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PyCustomValue>> {
+    let raw = spanned_str_to_py(py, v.raw, file)?;
     let kind = match v.kind {
         ast::CustomValueKind::String => "String",
         ast::CustomValueKind::Date => "Date",
@@ -797,11 +895,11 @@ fn custom_value_to_py(py: Python<'_>, v: ast::CustomValue<'_>) -> PyResult<Py<Py
         ast::CustomValueKind::Account => "Account",
     };
     let number = match v.number {
-        Some(n) => Some(number_expr_to_py(py, n)?),
+        Some(n) => Some(number_expr_to_py(py, n, file)?),
         None => None,
     };
     let amount = match v.amount {
-        Some(a) => Some(amount_to_py(py, a)?),
+        Some(a) => Some(amount_to_py(py, a, file)?),
         None => None,
     };
     Py::new(
@@ -815,35 +913,36 @@ fn custom_value_to_py(py: Python<'_>, v: ast::CustomValue<'_>) -> PyResult<Py<Py
     )
 }
 
-fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>> {
+fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>, file: &Py<PyFile>) -> PyResult<Py<PyAny>> {
     let obj: Py<PyAny> = match d {
         ast::Directive::Open(o) => {
             let meta = meta_to_py(py, o.meta)?;
             let span = span_to_py(py, o.span)?;
-            let date = spanned_str_to_py(py, o.date)?;
-            let account = spanned_str_to_py(py, o.account)?;
+            let date = spanned_str_to_py(py, o.date, file)?;
+            let account = spanned_str_to_py(py, o.account, file)?;
             let currencies = o
                 .currencies
                 .into_iter()
-                .map(|c| spanned_str_to_py(py, c))
+                .map(|c| spanned_str_to_py(py, c, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let opt_booking = match o.opt_booking {
-                Some(b) => Some(spanned_str_to_py(py, b)?),
+                Some(b) => Some(spanned_str_to_py(py, b, file)?),
                 None => None,
             };
             let comment = match o.comment {
-                Some(c) => Some(spanned_str_to_py(py, c)?),
+                Some(c) => Some(spanned_str_to_py(py, c, file)?),
                 None => None,
             };
             let key_values = o
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
 
             PyOpen {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 account,
                 currencies,
@@ -856,20 +955,21 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Close(c) => {
             let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
-            let date = spanned_str_to_py(py, c.date)?;
-            let account = spanned_str_to_py(py, c.account)?;
+            let date = spanned_str_to_py(py, c.date, file)?;
+            let account = spanned_str_to_py(py, c.account, file)?;
             let comment = match c.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = c
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyClose {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 account,
                 comment,
@@ -880,25 +980,26 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Balance(b) => {
             let meta = meta_to_py(py, b.meta)?;
             let span = span_to_py(py, b.span)?;
-            let date = spanned_str_to_py(py, b.date)?;
-            let account = spanned_str_to_py(py, b.account)?;
-            let amount = amount_to_py(py, b.amount)?;
+            let date = spanned_str_to_py(py, b.date, file)?;
+            let account = spanned_str_to_py(py, b.account, file)?;
+            let amount = amount_to_py(py, b.amount, file)?;
             let tolerance = match b.tolerance {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let comment = match b.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = b
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyBalance {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 account,
                 amount,
@@ -911,21 +1012,22 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Pad(p) => {
             let meta = meta_to_py(py, p.meta)?;
             let span = span_to_py(py, p.span)?;
-            let date = spanned_str_to_py(py, p.date)?;
-            let account = spanned_str_to_py(py, p.account)?;
-            let from_account = spanned_str_to_py(py, p.from_account)?;
+            let date = spanned_str_to_py(py, p.date, file)?;
+            let account = spanned_str_to_py(py, p.account, file)?;
+            let from_account = spanned_str_to_py(py, p.from_account, file)?;
             let comment = match p.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = p
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyPad {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 account,
                 from_account,
@@ -937,61 +1039,62 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Transaction(t) => {
             let meta = meta_to_py(py, t.meta)?;
             let span = span_to_py(py, t.span)?;
-            let date = spanned_str_to_py(py, t.date)?;
+            let date = spanned_str_to_py(py, t.date, file)?;
             let txn = match t.txn {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let payee = match t.payee {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let narration = match t.narration {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let tags_links = match t.tags_links {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let tags = t
                 .tags
                 .into_iter()
-                .map(|s| spanned_str_to_py(py, s))
+                .map(|s| spanned_str_to_py(py, s, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let links = t
                 .links
                 .into_iter()
-                .map(|s| spanned_str_to_py(py, s))
+                .map(|s| spanned_str_to_py(py, s, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let comment = match t.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let tags_links_lines = t
                 .tags_links_lines
                 .into_iter()
-                .map(|s| spanned_str_to_py(py, s))
+                .map(|s| spanned_str_to_py(py, s, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let comments = t
                 .comments
                 .into_iter()
-                .map(|s| spanned_str_to_py(py, s))
+                .map(|s| spanned_str_to_py(py, s, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let key_values = t
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let postings = t
                 .postings
                 .into_iter()
-                .map(|p| posting_to_py(py, p))
+                .map(|p| posting_to_py(py, p, file))
                 .collect::<PyResult<Vec<_>>>()?;
 
             PyTransaction {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 txn,
                 payee,
@@ -1010,20 +1113,21 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Commodity(c) => {
             let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
-            let date = spanned_str_to_py(py, c.date)?;
-            let currency = spanned_str_to_py(py, c.currency)?;
+            let date = spanned_str_to_py(py, c.date, file)?;
+            let currency = spanned_str_to_py(py, c.currency, file)?;
             let comment = match c.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = c
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyCommodity {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 currency,
                 comment,
@@ -1034,21 +1138,22 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Price(p) => {
             let meta = meta_to_py(py, p.meta)?;
             let span = span_to_py(py, p.span)?;
-            let date = spanned_str_to_py(py, p.date)?;
-            let currency = spanned_str_to_py(py, p.currency)?;
-            let amount = amount_to_py(py, p.amount)?;
+            let date = spanned_str_to_py(py, p.date, file)?;
+            let currency = spanned_str_to_py(py, p.currency, file)?;
+            let amount = amount_to_py(py, p.amount, file)?;
             let comment = match p.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = p
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyPrice {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 currency,
                 amount,
@@ -1060,21 +1165,22 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Event(e) => {
             let meta = meta_to_py(py, e.meta)?;
             let span = span_to_py(py, e.span)?;
-            let date = spanned_str_to_py(py, e.date)?;
-            let event_type = spanned_str_to_py(py, e.event_type)?;
-            let desc = spanned_str_to_py(py, e.desc)?;
+            let date = spanned_str_to_py(py, e.date, file)?;
+            let event_type = spanned_str_to_py(py, e.event_type, file)?;
+            let desc = spanned_str_to_py(py, e.desc, file)?;
             let comment = match e.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = e
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyEvent {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 event_type,
                 desc,
@@ -1086,21 +1192,22 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Query(q) => {
             let meta = meta_to_py(py, q.meta)?;
             let span = span_to_py(py, q.span)?;
-            let date = spanned_str_to_py(py, q.date)?;
-            let name = spanned_str_to_py(py, q.name)?;
-            let query = spanned_str_to_py(py, q.query)?;
+            let date = spanned_str_to_py(py, q.date, file)?;
+            let name = spanned_str_to_py(py, q.name, file)?;
+            let query = spanned_str_to_py(py, q.query, file)?;
             let comment = match q.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = q
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyQuery {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 name,
                 query,
@@ -1112,21 +1219,22 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Note(n) => {
             let meta = meta_to_py(py, n.meta)?;
             let span = span_to_py(py, n.span)?;
-            let date = spanned_str_to_py(py, n.date)?;
-            let account = spanned_str_to_py(py, n.account)?;
-            let note = spanned_str_to_py(py, n.note)?;
+            let date = spanned_str_to_py(py, n.date, file)?;
+            let account = spanned_str_to_py(py, n.account, file)?;
+            let note = spanned_str_to_py(py, n.note, file)?;
             let comment = match n.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = n
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyNote {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 account,
                 note,
@@ -1138,35 +1246,36 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Document(d) => {
             let meta = meta_to_py(py, d.meta)?;
             let span = span_to_py(py, d.span)?;
-            let date = spanned_str_to_py(py, d.date)?;
-            let account = spanned_str_to_py(py, d.account)?;
-            let filename = spanned_str_to_py(py, d.filename)?;
+            let date = spanned_str_to_py(py, d.date, file)?;
+            let account = spanned_str_to_py(py, d.account, file)?;
+            let filename = spanned_str_to_py(py, d.filename, file)?;
             let tags_links = match d.tags_links {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let tags = d
                 .tags
                 .into_iter()
-                .map(|s| spanned_str_to_py(py, s))
+                .map(|s| spanned_str_to_py(py, s, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let links = d
                 .links
                 .into_iter()
-                .map(|s| spanned_str_to_py(py, s))
+                .map(|s| spanned_str_to_py(py, s, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let comment = match d.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = d
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyDocument {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 account,
                 filename,
@@ -1181,25 +1290,26 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Custom(c) => {
             let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
-            let date = spanned_str_to_py(py, c.date)?;
-            let name = spanned_str_to_py(py, c.name)?;
+            let date = spanned_str_to_py(py, c.date, file)?;
+            let name = spanned_str_to_py(py, c.name, file)?;
             let values = c
                 .values
                 .into_iter()
-                .map(|v| custom_value_to_py(py, v))
+                .map(|v| custom_value_to_py(py, v, file))
                 .collect::<PyResult<Vec<_>>>()?;
             let comment = match c.comment {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             let key_values = c
                 .key_values
                 .into_iter()
-                .map(|kv| key_value_to_py(py, kv))
+                .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyCustom {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 date,
                 name,
                 values,
@@ -1211,11 +1321,12 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Option(o) => {
             let meta = meta_to_py(py, o.meta)?;
             let span = span_to_py(py, o.span)?;
-            let key = spanned_str_to_py(py, o.key)?;
-            let value = spanned_str_to_py(py, o.value)?;
+            let key = spanned_str_to_py(py, o.key, file)?;
+            let value = spanned_str_to_py(py, o.value, file)?;
             PyOption {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 key,
                 value,
             }
@@ -1224,10 +1335,11 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Include(i) => {
             let meta = meta_to_py(py, i.meta)?;
             let span = span_to_py(py, i.span)?;
-            let filename = spanned_str_to_py(py, i.filename)?;
+            let filename = spanned_str_to_py(py, i.filename, file)?;
             PyInclude {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 filename,
             }
             .into_py_any(py)?
@@ -1235,14 +1347,15 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::Plugin(p) => {
             let meta = meta_to_py(py, p.meta)?;
             let span = span_to_py(py, p.span)?;
-            let name = spanned_str_to_py(py, p.name)?;
+            let name = spanned_str_to_py(py, p.name, file)?;
             let config = match p.config {
-                Some(v) => Some(spanned_str_to_py(py, v)?),
+                Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
             PyPlugin {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 name,
                 config,
             }
@@ -1251,10 +1364,11 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::PushTag(t) => {
             let meta = meta_to_py(py, t.meta)?;
             let span = span_to_py(py, t.span)?;
-            let tag = spanned_str_to_py(py, t.tag)?;
+            let tag = spanned_str_to_py(py, t.tag, file)?;
             PyTagDirective {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 tag,
                 action: "Push".to_owned(),
             }
@@ -1263,10 +1377,11 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::PopTag(t) => {
             let meta = meta_to_py(py, t.meta)?;
             let span = span_to_py(py, t.span)?;
-            let tag = spanned_str_to_py(py, t.tag)?;
+            let tag = spanned_str_to_py(py, t.tag, file)?;
             PyTagDirective {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 tag,
                 action: "Pop".to_owned(),
             }
@@ -1275,14 +1390,15 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::PushMeta(pm) => {
             let meta = meta_to_py(py, pm.meta)?;
             let span = span_to_py(py, pm.span)?;
-            let key = spanned_str_to_py(py, pm.key)?;
+            let key = spanned_str_to_py(py, pm.key, file)?;
             let value = match pm.value {
-                Some(v) => Some(spanned_key_value_value_to_py(py, v)?),
+                Some(v) => Some(spanned_key_value_value_to_py(py, v, file)?),
                 None => None,
             };
             PyPushMeta {
                 meta,
                 span,
+                file: file.clone_ref(py),
                 key,
                 value,
             }
@@ -1291,43 +1407,183 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
         ast::Directive::PopMeta(pm) => {
             let meta = meta_to_py(py, pm.meta)?;
             let span = span_to_py(py, pm.span)?;
-            let key = spanned_str_to_py(py, pm.key)?;
-            PyPopMeta { meta, span, key }.into_py_any(py)?
+            let key = spanned_str_to_py(py, pm.key, file)?;
+            PyPopMeta {
+                meta,
+                span,
+                file: file.clone_ref(py),
+                key,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Comment(c) => {
             let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
-            let text = spanned_str_to_py(py, c.text)?;
-            PyComment { meta, span, text }.into_py_any(py)?
+            let text = spanned_str_to_py(py, c.text, file)?;
+            PyComment {
+                meta,
+                span,
+                file: file.clone_ref(py),
+                text,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Headline(h) => {
             let meta = meta_to_py(py, h.meta)?;
             let span = span_to_py(py, h.span)?;
-            let text = spanned_str_to_py(py, h.text)?;
-            PyHeadline { meta, span, text }.into_py_any(py)?
+            let text = spanned_str_to_py(py, h.text, file)?;
+            PyHeadline {
+                meta,
+                span,
+                file: file.clone_ref(py),
+                text,
+            }
+            .into_py_any(py)?
         }
     };
 
     Ok(obj)
 }
 
+// --- Dump helpers ---
+fn slice_by_span(source: &str, start: usize, end: usize) -> PyResult<String> {
+    if start > end {
+        return Err(PyValueError::new_err(format!(
+            "invalid span: start {} > end {}",
+            start, end
+        )));
+    }
+
+    let len = source.len();
+    if end > len {
+        return Err(PyValueError::new_err(format!(
+            "span end {} exceeds source length {}",
+            end, len
+        )));
+    }
+
+    if !source.is_char_boundary(start) || !source.is_char_boundary(end) {
+        return Err(PyValueError::new_err(
+            "span boundaries are not aligned to char boundaries",
+        ));
+    }
+
+    Ok(source[start..end].to_owned())
+}
+
+fn dump_span_from_file(py: Python<'_>, file: &Py<PyFile>, span: &PySpan) -> PyResult<String> {
+    let file_ref = file.bind(py);
+    let file_borrow = file_ref.borrow();
+    slice_by_span(&file_borrow.content, span.start, span.end)
+}
+
+macro_rules! impl_dump_via_span_field {
+    ($($ty:ident),* $(,)?) => {
+        $(
+            #[pymethods]
+            impl $ty {
+                fn dump(&self, py: Python<'_>) -> PyResult<String> {
+                    let span = self.span.bind(py).borrow();
+                    dump_span_from_file(py, &self.file, &span)
+                }
+            }
+        )*
+    };
+}
+
+impl_dump_via_span_field!(
+    PySpannedStr,
+    PySpannedBool,
+    PySpannedKeyValueValue,
+    PySpannedBinaryOp,
+    PyNumberExpr,
+    PyKeyValue,
+    PyPosting,
+    PyOpen,
+    PyClose,
+    PyBalance,
+    PyPad,
+    PyTransaction,
+    PyCommodity,
+    PyPrice,
+    PyEvent,
+    PyQuery,
+    PyNote,
+    PyDocument,
+    PyCustom,
+    PyOption,
+    PyInclude,
+    PyPlugin,
+    PyTagDirective,
+    PyPushMeta,
+    PyPopMeta,
+    PyComment,
+    PyHeadline,
+    PySpannedPriceOperator,
+);
+
+#[pymethods]
+impl PyAmount {
+    fn dump(&self, py: Python<'_>) -> PyResult<String> {
+        let raw = self.raw.bind(py);
+        let raw = raw.borrow();
+        let span = raw.span.bind(py).borrow();
+        dump_span_from_file(py, &raw.file, &span)
+    }
+}
+
+#[pymethods]
+impl PyCostSpec {
+    fn dump(&self, py: Python<'_>) -> PyResult<String> {
+        let raw = self.raw.bind(py);
+        let raw = raw.borrow();
+        let span = raw.span.bind(py).borrow();
+        dump_span_from_file(py, &raw.file, &span)
+    }
+}
+
+#[pymethods]
+impl PyCustomValue {
+    fn dump(&self, py: Python<'_>) -> PyResult<String> {
+        let raw = self.raw.bind(py);
+        let raw = raw.borrow();
+        let span = raw.span.bind(py).borrow();
+        dump_span_from_file(py, &raw.file, &span)
+    }
+}
+
 // --- Python API ---
 #[pyfunction]
 #[pyo3(signature = (content, filename = "<string>"))]
-fn parse_string(py: Python<'_>, content: &str, filename: &str) -> PyResult<Py<PyList>> {
+fn parse_string(py: Python<'_>, content: &str, filename: &str) -> PyResult<Py<PyFile>> {
     let directives =
         parse_str(content, filename).map_err(|err| PyValueError::new_err(err.to_string()))?;
 
-    let out = PyList::empty(py);
+    let file = Py::new(
+        py,
+        PyFile {
+            filename: filename.to_owned(),
+            content: content.to_owned(),
+            directives: Vec::with_capacity(directives.len()),
+        },
+    )?;
+
+    let mut py_directives = Vec::with_capacity(directives.len());
     for directive in directives {
-        out.append(directive_to_py(py, directive)?)?;
+        py_directives.push(directive_to_py(py, directive, &file)?);
     }
-    Ok(out.unbind())
+
+    {
+        let mut file_ref = file.bind(py).borrow_mut();
+        file_ref.directives = py_directives;
+    }
+
+    Ok(file)
 }
 
 #[pyfunction]
 #[pyo3(signature = (filename))]
-fn parse_file(py: Python<'_>, filename: &str) -> PyResult<Py<PyList>> {
+fn parse_file(py: Python<'_>, filename: &str) -> PyResult<Py<PyFile>> {
     let content = std::fs::read_to_string(filename)
         .map_err(|err| PyValueError::new_err(format!("failed to read {}: {}", filename, err)))?;
     parse_string(py, &content, filename)
@@ -1373,7 +1629,7 @@ pyo3_stub_gen::inventory::submit! {
   pyo3_stub_gen::derive::gen_function_from_python! {
     module = "beancount_ast._ast",
     r#"
-def parse_string(content: builtins.str, filename: builtins.str = "<string>") -> builtins.list[Directive]: ...
+def parse_string(content: builtins.str, filename: builtins.str = "<string>") -> File: ...
 "#
   }
 }
@@ -1385,7 +1641,7 @@ pyo3_stub_gen::inventory::submit! {
     r#"
 import builtins
 
-def parse_file(filename: builtins.str) -> builtins.list[Directive]: ...
+def parse_file(filename: builtins.str) -> File: ...
 "#
   }
 }
