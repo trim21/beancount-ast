@@ -4,6 +4,7 @@
 use beancount_parser::ast;
 use beancount_parser::parse_str;
 use pyderive::*;
+use pyo3::IntoPyObjectExt;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::{PyList, PyModule};
@@ -847,23 +848,18 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyOpen {
-                    meta,
-                    span,
-                    date,
-                    account,
-                    currencies,
-                    opt_booking,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+
+            PyOpen {
+                meta,
+                span,
+                date,
+                account,
+                currencies,
+                opt_booking,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Close(c) => {
             let meta = meta_to_py(py, c.meta)?;
@@ -879,21 +875,15 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyClose {
-                    meta,
-                    span,
-                    date,
-                    account,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyClose {
+                meta,
+                span,
+                date,
+                account,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Balance(b) => {
             let meta = meta_to_py(py, b.meta)?;
@@ -914,23 +904,17 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyBalance {
-                    meta,
-                    span,
-                    date,
-                    account,
-                    amount,
-                    tolerance,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyBalance {
+                meta,
+                span,
+                date,
+                account,
+                amount,
+                tolerance,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Pad(p) => {
             let meta = meta_to_py(py, p.meta)?;
@@ -947,22 +931,16 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyPad {
-                    meta,
-                    span,
-                    date,
-                    account,
-                    from_account,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyPad {
+                meta,
+                span,
+                date,
+                account,
+                from_account,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Transaction(t) => {
             let meta = meta_to_py(py, t.meta)?;
@@ -1029,26 +1007,20 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 },
             )?;
 
-            Py::new(
-                py,
-                PyTransaction {
-                    meta,
-                    span,
-                    date,
-                    txn,
-                    payee,
-                    narration,
-                    tags_links,
-                    tags,
-                    links,
-                    comment,
-                    extra,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyTransaction {
+                meta,
+                span,
+                date,
+                txn,
+                payee,
+                narration,
+                tags_links,
+                tags,
+                links,
+                comment,
+                extra,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Commodity(c) => {
             let meta = meta_to_py(py, c.meta)?;
@@ -1064,21 +1036,15 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyCommodity {
-                    meta,
-                    span,
-                    date,
-                    currency,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyCommodity {
+                meta,
+                span,
+                date,
+                currency,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Price(p) => {
             let meta = meta_to_py(py, p.meta)?;
@@ -1095,22 +1061,16 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyPrice {
-                    meta,
-                    span,
-                    date,
-                    currency,
-                    amount,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyPrice {
+                meta,
+                span,
+                date,
+                currency,
+                amount,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Event(e) => {
             let meta = meta_to_py(py, e.meta)?;
@@ -1127,22 +1087,16 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyEvent {
-                    meta,
-                    span,
-                    date,
-                    event_type,
-                    desc,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyEvent {
+                meta,
+                span,
+                date,
+                event_type,
+                desc,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Query(q) => {
             let meta = meta_to_py(py, q.meta)?;
@@ -1159,22 +1113,16 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyQuery {
-                    meta,
-                    span,
-                    date,
-                    name,
-                    query,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyQuery {
+                meta,
+                span,
+                date,
+                name,
+                query,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Note(n) => {
             let meta = meta_to_py(py, n.meta)?;
@@ -1191,22 +1139,16 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyNote {
-                    meta,
-                    span,
-                    date,
-                    account,
-                    note,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyNote {
+                meta,
+                span,
+                date,
+                account,
+                note,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Document(d) => {
             let meta = meta_to_py(py, d.meta)?;
@@ -1237,25 +1179,19 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyDocument {
-                    meta,
-                    span,
-                    date,
-                    account,
-                    filename,
-                    tags_links,
-                    tags,
-                    links,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyDocument {
+                meta,
+                span,
+                date,
+                account,
+                filename,
+                tags_links,
+                tags,
+                links,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Custom(c) => {
             let meta = meta_to_py(py, c.meta)?;
@@ -1276,58 +1212,40 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 .into_iter()
                 .map(|kv| key_value_to_py(py, kv))
                 .collect::<PyResult<Vec<_>>>()?;
-            Py::new(
-                py,
-                PyCustom {
-                    meta,
-                    span,
-                    date,
-                    name,
-                    values,
-                    comment,
-                    key_values,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyCustom {
+                meta,
+                span,
+                date,
+                name,
+                values,
+                comment,
+                key_values,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Option(o) => {
             let meta = meta_to_py(py, o.meta)?;
             let span = span_to_py(py, o.span)?;
             let key = spanned_str_to_py(py, o.key)?;
             let value = spanned_str_to_py(py, o.value)?;
-            Py::new(
-                py,
-                PyOption {
-                    meta,
-                    span,
-                    key,
-                    value,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyOption {
+                meta,
+                span,
+                key,
+                value,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Include(i) => {
             let meta = meta_to_py(py, i.meta)?;
             let span = span_to_py(py, i.span)?;
             let filename = spanned_str_to_py(py, i.filename)?;
-            Py::new(
-                py,
-                PyInclude {
-                    meta,
-                    span,
-                    filename,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyInclude {
+                meta,
+                span,
+                filename,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::Plugin(p) => {
             let meta = meta_to_py(py, p.meta)?;
@@ -1337,55 +1255,37 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 Some(v) => Some(spanned_str_to_py(py, v)?),
                 None => None,
             };
-            Py::new(
-                py,
-                PyPlugin {
-                    meta,
-                    span,
-                    name,
-                    config,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyPlugin {
+                meta,
+                span,
+                name,
+                config,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::PushTag(t) => {
             let meta = meta_to_py(py, t.meta)?;
             let span = span_to_py(py, t.span)?;
             let tag = spanned_str_to_py(py, t.tag)?;
-            Py::new(
-                py,
-                PyTagDirective {
-                    meta,
-                    span,
-                    tag,
-                    action: "Push".to_owned(),
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyTagDirective {
+                meta,
+                span,
+                tag,
+                action: "Push".to_owned(),
+            }
+            .into_py_any(py)?
         }
         ast::Directive::PopTag(t) => {
             let meta = meta_to_py(py, t.meta)?;
             let span = span_to_py(py, t.span)?;
             let tag = spanned_str_to_py(py, t.tag)?;
-            Py::new(
-                py,
-                PyTagDirective {
-                    meta,
-                    span,
-                    tag,
-                    action: "Pop".to_owned(),
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyTagDirective {
+                meta,
+                span,
+                tag,
+                action: "Pop".to_owned(),
+            }
+            .into_py_any(py)?
         }
         ast::Directive::PushMeta(pm) => {
             let meta = meta_to_py(py, pm.meta)?;
@@ -1395,49 +1295,31 @@ fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>) -> PyResult<Py<PyAny>>
                 Some(v) => Some(spanned_key_value_value_to_py(py, v)?),
                 None => None,
             };
-            Py::new(
-                py,
-                PyPushMeta {
-                    meta,
-                    span,
-                    key,
-                    value,
-                },
-            )?
-            .bind(py)
-            .clone()
-            .into_any()
-            .unbind()
+            PyPushMeta {
+                meta,
+                span,
+                key,
+                value,
+            }
+            .into_py_any(py)?
         }
         ast::Directive::PopMeta(pm) => {
             let meta = meta_to_py(py, pm.meta)?;
             let span = span_to_py(py, pm.span)?;
             let key = spanned_str_to_py(py, pm.key)?;
-            Py::new(py, PyPopMeta { meta, span, key })?
-                .bind(py)
-                .clone()
-                .into_any()
-                .unbind()
+            PyPopMeta { meta, span, key }.into_py_any(py)?
         }
         ast::Directive::Comment(c) => {
             let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
             let text = spanned_str_to_py(py, c.text)?;
-            Py::new(py, PyComment { meta, span, text })?
-                .bind(py)
-                .clone()
-                .into_any()
-                .unbind()
+            PyComment { meta, span, text }.into_py_any(py)?
         }
         ast::Directive::Headline(h) => {
             let meta = meta_to_py(py, h.meta)?;
             let span = span_to_py(py, h.span)?;
             let text = spanned_str_to_py(py, h.text)?;
-            Py::new(py, PyHeadline { meta, span, text })?
-                .bind(py)
-                .clone()
-                .into_any()
-                .unbind()
+            PyHeadline { meta, span, text }.into_py_any(py)?
         }
     };
 
