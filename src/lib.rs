@@ -829,7 +829,11 @@ fn spanned_price_operator_to_py(
     )
 }
 
-fn posting_to_py(py: Python<'_>, p: ast::Posting<'_>, file: &Py<PyFile>) -> PyResult<Py<PyPosting>> {
+fn posting_to_py(
+    py: Python<'_>,
+    p: ast::Posting<'_>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PyPosting>> {
     let meta = meta_to_py(py, p.meta)?;
     let span = span_to_py(py, p.span)?;
     let opt_flag = match p.opt_flag {
@@ -913,7 +917,11 @@ fn custom_value_to_py(
     )
 }
 
-fn directive_to_py(py: Python<'_>, d: ast::Directive<'_>, file: &Py<PyFile>) -> PyResult<Py<PyAny>> {
+fn directive_to_py(
+    py: Python<'_>,
+    d: ast::Directive<'_>,
+    file: &Py<PyFile>,
+) -> PyResult<Py<PyAny>> {
     let obj: Py<PyAny> = match d {
         ast::Directive::Open(o) => {
             let meta = meta_to_py(py, o.meta)?;
