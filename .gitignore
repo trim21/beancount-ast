@@ -8,6 +8,7 @@
 *~
 .cache
 .idea
+.vscode/
 .noseids
 .pytest_cache/*
 TAGS
