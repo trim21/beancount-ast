@@ -143,10 +143,8 @@ fn cost_spec_ref_to_string(py: Python<'_>, cs: &PyCostSpec) -> PyResult<String> 
     if let Some(a) = &cs.amount {
         let a = a.bind(py).borrow();
         let mut amount = cost_amount_ref_to_string(py, &a)?;
-        if spanned_bool_content(py, &cs.is_total)? {
-            if !amount.is_empty() {
-                amount = format!("# {amount}");
-            }
+        if spanned_bool_content(py, &cs.is_total)? && !amount.is_empty() {
+            amount = format!("# {amount}");
         }
         if !amount.is_empty() {
             items.push(amount);
