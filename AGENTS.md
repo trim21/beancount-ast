@@ -15,15 +15,16 @@
 - `tests/test_parse_snapshots.py`: snapshot-style API tests (`pytest` + `syrupy`).
 
 ## Workflows (local + CI-aligned)
-- Python deps / test env are managed with `uv` (see `.github/workflows/tests.yml`).
+- Running python tests.
   - Setup: `uv sync --dev --no-install-project`
-  - Run tests: `uv run pytest`
+  - Re-build module after any rust code change: `maturin develop --locked --release --uv -v`
+  - Run tests: `pytest`
 - Rust checks mirror CI (`.github/workflows/ci.yml`):
   - Format: `cargo fmt --all -- --check`
   - Lint: `cargo clippy --workspace --all-targets --all-features -- -D warnings`
 
 ## Conventions to follow when changing Rust bindings
-- Avoid `unwrap()` / `expect()`; the crate denies them (`src/lib.rs` has `#![deny(clippy::unwrap_used, clippy::expect_used)]`).
+- Avoid `unwrap()` / `expect()` / `unwrap_of_default()`; the crate denies them (`src/lib.rs` has `#![deny(clippy::unwrap_used, clippy::expect_used)]`), the error should be propagated to caller.
 - Python-facing data structures are thin, mostly immutable “record” types:
   - Define a `Py*` struct with `#[pyclass(..., get_all)]` and `pyderive` derives (`PyNew`, `PyRepr`, `PyStr`, and sometimes `PyEq`).
   - If the type should appear in stubs, add `#[cfg_attr(feature = "stub-gen", ...gen_stub_pyclass)]`.
@@ -31,7 +32,6 @@
   1) Add the `Py*` struct.
   2) Register it in the `_ast` module init.
   3) Extend the conversion layer (e.g. `directive_to_py(...)`).
-  4) Update the `Directive` type alias used for stubs (see the `stub-gen` block at the end of `src/lib.rs`).
 
 ## Formatting / linting
 - Non-code config formatting uses `dprint` (see `dprint.json`) and is enforced via pre-commit.
