@@ -5,13 +5,14 @@
 - The Python API intentionally exposes the **parser AST** (directives + spans + raw tokens), not Beancount’s semantic `beancount.core` model.
 
 ## Key layout
-- `src/lib.rs`: the PyO3 module `beancount_ast._ast`.
+- `src/lib.rs`: PyO3 module `beancount_ast._ast`.
   - Registers all exposed Python classes in `#[pymodule(name = "_ast")]`.
-  - Converts Rust parser nodes (`beancount_parser::ast::*`) into `Py*` structs.
-  - Public Python entrypoints are `parse_string` and `parse_file`.
-- `py-src/beancount_ast/__init__.py`: re-exports symbols from `beancount_ast._ast`.
-- `py-src/beancount_ast/__init__.pyi`: provide stubs to downstream users. then real type-stubs of `beancount_ast._ast`.
-- `tests/test_parse_snapshots.py`: snapshot-style API tests using `pytest` + `syrupy`.
+  - Converts `beancount_parser::ast::*` nodes into `Py*` wrappers.
+  - Exposes `parse_string` and `parse_file` to Python.
+- `py-src/beancount_ast/__init__.py`: re-exports compiled `_ast` symbols and the `Directive` ABC for consumers.
+- `py-src/beancount_ast/_directive.py`: defines the `Directive` ABC and registers all directive classes.
+- `py-src/beancount_ast/_ast.pyi`: canonical type stubs mirroring the compiled `beancount_ast._ast` extension.
+- `tests/test_parse_snapshots.py`: snapshot-style API tests (`pytest` + `syrupy`).
 
 ## Workflows (local + CI-aligned)
 - Python deps / test env are managed with `uv` (see `.github/workflows/tests.yml`).
