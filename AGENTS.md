@@ -10,7 +10,7 @@
   - Converts Rust parser nodes (`beancount_parser::ast::*`) into `Py*` structs.
   - Public Python entrypoints are `parse_string` and `parse_file`.
 - `py-src/beancount_ast/__init__.py`: re-exports symbols from `beancount_ast._ast`.
-- `py-src/beancount_ast/_ast.pyi`: stubs of `src/lib.rs`, when you change any interface, you should also update it.
+- `py-src/beancount_ast/__init__.pyi`: provide stubs to downstream users. then real type-stubs of `beancount_ast._ast`.
 - `tests/test_parse_snapshots.py`: snapshot-style API tests using `pytest` + `syrupy`.
 
 ## Workflows (local + CI-aligned)
@@ -31,12 +31,6 @@
   2) Register it in the `_ast` module init.
   3) Extend the conversion layer (e.g. `directive_to_py(...)`).
   4) Update the `Directive` type alias used for stubs (see the `stub-gen` block at the end of `src/lib.rs`).
-
-## Stub generation
-- The stub generator binary is `src/bin/stub_gen.rs` and is only available with the `stub-gen` feature.
-- Typical command:
-  - `cargo run --bin stub_gen --features stub-gen`
-- The generated output updates `py-src/beancount_ast/_ast.pyi`.
 
 ## Formatting / linting
 - Non-code config formatting uses `dprint` (see `dprint.json`) and is enforced via pre-commit.
