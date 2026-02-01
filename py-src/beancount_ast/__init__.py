@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from ._ast import Amount
 from ._ast import Balance
 from ._ast import Close
@@ -36,7 +38,11 @@ from ._ast import Transaction
 from ._ast import parse_file
 from ._ast import parse_string
 
+if TYPE_CHECKING:
+    from ._ast import Directive
+
 __all__ = [
+    "Directive",
     "Amount",
     "Balance",
     "Close",
