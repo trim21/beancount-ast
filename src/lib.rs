@@ -12,10 +12,6 @@ use std::fmt;
 
 #[pymodule(name = "_ast")]
 fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-    m.add("__version__", VERSION)?;
-
     // File container
     m.add_class::<PyFile>()?;
 
@@ -65,7 +61,6 @@ fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "File", get_all)]
 struct PyFile {
     filename: String,
@@ -84,7 +79,6 @@ impl fmt::Debug for PyFile {
 }
 
 #[derive(Clone, PartialEq, Eq, Hash, PyNew, PyRepr, PyStr, PyEq)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Span", get_all)]
 struct PySpan {
     start: usize,
@@ -92,7 +86,6 @@ struct PySpan {
 }
 
 #[derive(Clone, PartialEq, Eq, Hash, PyNew, PyRepr, PyStr, PyEq)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Meta", get_all)]
 struct PyMeta {
     filename: String,
@@ -101,7 +94,6 @@ struct PyMeta {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "SpannedStr", get_all)]
 struct PySpannedStr {
     span: Py<PySpan>,
@@ -110,7 +102,6 @@ struct PySpannedStr {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "SpannedBool", get_all)]
 struct PySpannedBool {
     span: Py<PySpan>,
@@ -119,7 +110,6 @@ struct PySpannedBool {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "KeyValueValue", get_all)]
 struct PyKeyValueValue {
     kind: String,
@@ -128,7 +118,6 @@ struct PyKeyValueValue {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "SpannedKeyValueValue", get_all)]
 struct PySpannedKeyValueValue {
     span: Py<PySpan>,
@@ -137,7 +126,6 @@ struct PySpannedKeyValueValue {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "KeyValue", get_all)]
 struct PyKeyValue {
     meta: Py<PyMeta>,
@@ -148,7 +136,6 @@ struct PyKeyValue {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "SpannedBinaryOp", get_all)]
 struct PySpannedBinaryOp {
     span: Py<PySpan>,
@@ -157,7 +144,6 @@ struct PySpannedBinaryOp {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "NumberExpr", get_all)]
 struct PyNumberExpr {
     kind: String,
@@ -170,7 +156,6 @@ struct PyNumberExpr {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Amount", get_all)]
 struct PyAmount {
     raw: Py<PySpannedStr>,
@@ -179,7 +164,6 @@ struct PyAmount {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "CostAmount", get_all)]
 struct PyCostAmount {
     per: Option<Py<PyNumberExpr>>,
@@ -188,7 +172,6 @@ struct PyCostAmount {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "CostSpec", get_all)]
 struct PyCostSpec {
     raw: Py<PySpannedStr>,
@@ -200,7 +183,6 @@ struct PyCostSpec {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "SpannedPriceOperator", get_all)]
 struct PySpannedPriceOperator {
     span: Py<PySpan>,
@@ -209,7 +191,6 @@ struct PySpannedPriceOperator {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Posting", get_all)]
 struct PyPosting {
     meta: Py<PyMeta>,
@@ -226,7 +207,6 @@ struct PyPosting {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "CustomValue", get_all)]
 struct PyCustomValue {
     raw: Py<PySpannedStr>,
@@ -238,7 +218,6 @@ struct PyCustomValue {
 // --- Directives ---
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Open", get_all)]
 struct PyOpen {
     meta: Py<PyMeta>,
@@ -253,7 +232,6 @@ struct PyOpen {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Close", get_all)]
 struct PyClose {
     meta: Py<PyMeta>,
@@ -266,7 +244,6 @@ struct PyClose {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Balance", get_all)]
 struct PyBalance {
     meta: Py<PyMeta>,
@@ -281,7 +258,6 @@ struct PyBalance {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Pad", get_all)]
 struct PyPad {
     meta: Py<PyMeta>,
@@ -295,7 +271,6 @@ struct PyPad {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Transaction", get_all)]
 struct PyTransaction {
     meta: Py<PyMeta>,
@@ -316,7 +291,6 @@ struct PyTransaction {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Commodity", get_all)]
 struct PyCommodity {
     meta: Py<PyMeta>,
@@ -329,7 +303,6 @@ struct PyCommodity {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Price", get_all)]
 struct PyPrice {
     meta: Py<PyMeta>,
@@ -343,7 +316,6 @@ struct PyPrice {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Event", get_all)]
 struct PyEvent {
     meta: Py<PyMeta>,
@@ -357,7 +329,6 @@ struct PyEvent {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Query", get_all)]
 struct PyQuery {
     meta: Py<PyMeta>,
@@ -371,7 +342,6 @@ struct PyQuery {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Note", get_all)]
 struct PyNote {
     meta: Py<PyMeta>,
@@ -385,7 +355,6 @@ struct PyNote {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Document", get_all)]
 struct PyDocument {
     meta: Py<PyMeta>,
@@ -402,7 +371,6 @@ struct PyDocument {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Custom", get_all)]
 struct PyCustom {
     meta: Py<PyMeta>,
@@ -416,7 +384,6 @@ struct PyCustom {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Option", get_all)]
 struct PyOption {
     meta: Py<PyMeta>,
@@ -427,7 +394,6 @@ struct PyOption {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Include", get_all)]
 struct PyInclude {
     meta: Py<PyMeta>,
@@ -437,7 +403,6 @@ struct PyInclude {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Plugin", get_all)]
 struct PyPlugin {
     meta: Py<PyMeta>,
@@ -448,7 +413,6 @@ struct PyPlugin {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Tag", get_all)]
 struct PyTagDirective {
     meta: Py<PyMeta>,
@@ -459,7 +423,6 @@ struct PyTagDirective {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "PushMeta", get_all)]
 struct PyPushMeta {
     meta: Py<PyMeta>,
@@ -470,7 +433,6 @@ struct PyPushMeta {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "PopMeta", get_all)]
 struct PyPopMeta {
     meta: Py<PyMeta>,
@@ -480,7 +442,6 @@ struct PyPopMeta {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Comment", get_all)]
 struct PyComment {
     meta: Py<PyMeta>,
@@ -490,7 +451,6 @@ struct PyComment {
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
-#[cfg_attr(feature = "stub-gen", pyo3_stub_gen::derive::gen_stub_pyclass)]
 #[pyclass(module = "beancount_ast._ast", name = "Headline", get_all)]
 struct PyHeadline {
     meta: Py<PyMeta>,
@@ -1596,73 +1556,3 @@ fn parse_file(py: Python<'_>, filename: &str) -> PyResult<Py<PyFile>> {
         .map_err(|err| PyValueError::new_err(format!("failed to read {}: {}", filename, err)))?;
     parse_string(py, &content, filename)
 }
-
-#[cfg(feature = "stub-gen")]
-pyo3_stub_gen::module_variable!("beancount_ast", "__version__", String);
-
-#[cfg(feature = "stub-gen")]
-pyo3_stub_gen::derive::gen_type_alias_from_python! {
-    "beancount_ast._ast",
-    r#"
-import builtins
-from typing import TypeAlias
-
-Directive: TypeAlias = (
-    Open
-    | Close
-    | Balance
-    | Pad
-    | Transaction
-    | Commodity
-    | Price
-    | Event
-    | Query
-    | Note
-    | Document
-    | Custom
-    | Option
-    | Include
-    | Plugin
-    | Tag
-    | PushMeta
-    | PopMeta
-    | Comment
-    | Headline
-)
-"#
-}
-
-#[cfg(feature = "stub-gen")]
-pyo3_stub_gen::inventory::submit! {
-  pyo3_stub_gen::derive::gen_function_from_python! {
-    module = "beancount_ast._ast",
-    r#"
-def parse_string(content: builtins.str, filename: builtins.str = "<string>") -> File: ...
-"#
-  }
-}
-
-#[cfg(feature = "stub-gen")]
-pyo3_stub_gen::inventory::submit! {
-  pyo3_stub_gen::derive::gen_function_from_python! {
-    module = "beancount_ast._ast",
-    r#"
-import builtins
-
-def parse_file(filename: builtins.str) -> File: ...
-"#
-  }
-}
-
-// #[cfg(feature = "stub-gen")]
-// pyo3_stub_gen::reexport_module_members!(
-//   "beancount_ast",
-//   // "beancount_ast._ast",
-//   "__version__",
-//   "Directive",
-//   "parse_string",
-//   "parse_file"
-// );
-
-#[cfg(feature = "stub-gen")]
-pyo3_stub_gen::define_stub_info_gatherer!(stub_info);
