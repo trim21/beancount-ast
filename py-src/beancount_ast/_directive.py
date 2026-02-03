@@ -11,7 +11,6 @@ from beancount_ast._ast import (
     File,
     Headline,
     Include,
-    Meta,
     Note,
     Open,
     Option,
@@ -28,8 +27,6 @@ from beancount_ast._ast import (
 
 
 class Directive(abc.ABC):
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property

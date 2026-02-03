@@ -17,7 +17,6 @@ fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     // Core building blocks
     m.add_class::<PySpan>()?;
-    m.add_class::<PyMeta>()?;
     m.add_class::<PySpannedStr>()?;
     m.add_class::<PySpannedBool>()?;
     m.add_class::<PyKeyValueValue>()?;
@@ -85,14 +84,6 @@ struct PySpan {
     end: usize,
 }
 
-#[derive(Clone, PartialEq, Eq, Hash, PyNew, PyRepr, PyStr, PyEq)]
-#[pyclass(module = "beancount_ast._ast", name = "Meta", get_all)]
-struct PyMeta {
-    filename: String,
-    line: usize,
-    column: usize,
-}
-
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "SpannedStr", get_all)]
 struct PySpannedStr {
@@ -128,7 +119,6 @@ struct PySpannedKeyValueValue {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "KeyValue", get_all)]
 struct PyKeyValue {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     key: Py<PySpannedStr>,
@@ -193,7 +183,6 @@ struct PySpannedPriceOperator {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Posting", get_all)]
 struct PyPosting {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     opt_flag: Option<Py<PySpannedStr>>,
@@ -220,7 +209,6 @@ struct PyCustomValue {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Open", get_all)]
 struct PyOpen {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -234,7 +222,6 @@ struct PyOpen {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Close", get_all)]
 struct PyClose {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -246,7 +233,6 @@ struct PyClose {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Balance", get_all)]
 struct PyBalance {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -260,7 +246,6 @@ struct PyBalance {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Pad", get_all)]
 struct PyPad {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -273,7 +258,6 @@ struct PyPad {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Transaction", get_all)]
 struct PyTransaction {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -293,7 +277,6 @@ struct PyTransaction {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Commodity", get_all)]
 struct PyCommodity {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -305,7 +288,6 @@ struct PyCommodity {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Price", get_all)]
 struct PyPrice {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -318,7 +300,6 @@ struct PyPrice {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Event", get_all)]
 struct PyEvent {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -331,7 +312,6 @@ struct PyEvent {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Query", get_all)]
 struct PyQuery {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -344,7 +324,6 @@ struct PyQuery {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Note", get_all)]
 struct PyNote {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -357,7 +336,6 @@ struct PyNote {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Document", get_all)]
 struct PyDocument {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -373,7 +351,6 @@ struct PyDocument {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Custom", get_all)]
 struct PyCustom {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     date: Py<PySpannedStr>,
@@ -386,7 +363,6 @@ struct PyCustom {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Option", get_all)]
 struct PyOption {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     key: Py<PySpannedStr>,
@@ -396,7 +372,6 @@ struct PyOption {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Include", get_all)]
 struct PyInclude {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     filename: Py<PySpannedStr>,
@@ -405,7 +380,6 @@ struct PyInclude {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Plugin", get_all)]
 struct PyPlugin {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     name: Py<PySpannedStr>,
@@ -415,7 +389,6 @@ struct PyPlugin {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Tag", get_all)]
 struct PyTagDirective {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     tag: Py<PySpannedStr>,
@@ -425,7 +398,6 @@ struct PyTagDirective {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "PushMeta", get_all)]
 struct PyPushMeta {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     key: Py<PySpannedStr>,
@@ -435,7 +407,6 @@ struct PyPushMeta {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "PopMeta", get_all)]
 struct PyPopMeta {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     key: Py<PySpannedStr>,
@@ -444,7 +415,6 @@ struct PyPopMeta {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Comment", get_all)]
 struct PyComment {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     text: Py<PySpannedStr>,
@@ -453,7 +423,6 @@ struct PyComment {
 #[derive(PyNew, PyRepr, PyStr)]
 #[pyclass(module = "beancount_ast._ast", name = "Headline", get_all)]
 struct PyHeadline {
-    meta: Py<PyMeta>,
     span: Py<PySpan>,
     file: Py<PyFile>,
     text: Py<PySpannedStr>,
@@ -467,17 +436,6 @@ fn span_to_py(py: Python<'_>, span: ast::Span) -> PyResult<Py<PySpan>> {
         PySpan {
             start: span.start,
             end: span.end,
-        },
-    )
-}
-
-fn meta_to_py(py: Python<'_>, meta: ast::Meta) -> PyResult<Py<PyMeta>> {
-    Py::new(
-        py,
-        PyMeta {
-            filename: meta.filename,
-            line: meta.line,
-            column: meta.column,
         },
     )
 }
@@ -584,7 +542,6 @@ fn key_value_to_py(
     kv: ast::KeyValue<'_>,
     file: &Py<PyFile>,
 ) -> PyResult<Py<PyKeyValue>> {
-    let meta = meta_to_py(py, kv.meta)?;
     let span = span_to_py(py, kv.span)?;
     let key = spanned_str_to_py(py, kv.key, file)?;
     let value = match kv.value {
@@ -595,7 +552,6 @@ fn key_value_to_py(
     Py::new(
         py,
         PyKeyValue {
-            meta,
             span,
             file: file.clone_ref(py),
             key,
@@ -794,7 +750,6 @@ fn posting_to_py(
     p: ast::Posting<'_>,
     file: &Py<PyFile>,
 ) -> PyResult<Py<PyPosting>> {
-    let meta = meta_to_py(py, p.meta)?;
     let span = span_to_py(py, p.span)?;
     let opt_flag = match p.opt_flag {
         Some(f) => Some(spanned_str_to_py(py, f, file)?),
@@ -829,7 +784,6 @@ fn posting_to_py(
     Py::new(
         py,
         PyPosting {
-            meta,
             span,
             file: file.clone_ref(py),
             opt_flag,
@@ -884,7 +838,6 @@ fn directive_to_py(
 ) -> PyResult<Py<PyAny>> {
     let obj: Py<PyAny> = match d {
         ast::Directive::Open(o) => {
-            let meta = meta_to_py(py, o.meta)?;
             let span = span_to_py(py, o.span)?;
             let date = spanned_str_to_py(py, o.date, file)?;
             let account = spanned_str_to_py(py, o.account, file)?;
@@ -908,7 +861,6 @@ fn directive_to_py(
                 .collect::<PyResult<Vec<_>>>()?;
 
             PyOpen {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -921,7 +873,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Close(c) => {
-            let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
             let date = spanned_str_to_py(py, c.date, file)?;
             let account = spanned_str_to_py(py, c.account, file)?;
@@ -935,7 +886,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyClose {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -946,7 +896,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Balance(b) => {
-            let meta = meta_to_py(py, b.meta)?;
             let span = span_to_py(py, b.span)?;
             let date = spanned_str_to_py(py, b.date, file)?;
             let account = spanned_str_to_py(py, b.account, file)?;
@@ -965,7 +914,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyBalance {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -978,7 +926,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Pad(p) => {
-            let meta = meta_to_py(py, p.meta)?;
             let span = span_to_py(py, p.span)?;
             let date = spanned_str_to_py(py, p.date, file)?;
             let account = spanned_str_to_py(py, p.account, file)?;
@@ -993,7 +940,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyPad {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1005,7 +951,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Transaction(t) => {
-            let meta = meta_to_py(py, t.meta)?;
             let span = span_to_py(py, t.span)?;
             let date = spanned_str_to_py(py, t.date, file)?;
             let txn = match t.txn {
@@ -1060,7 +1005,6 @@ fn directive_to_py(
                 .collect::<PyResult<Vec<_>>>()?;
 
             PyTransaction {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1079,7 +1023,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Commodity(c) => {
-            let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
             let date = spanned_str_to_py(py, c.date, file)?;
             let currency = spanned_str_to_py(py, c.currency, file)?;
@@ -1093,7 +1036,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyCommodity {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1104,7 +1046,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Price(p) => {
-            let meta = meta_to_py(py, p.meta)?;
             let span = span_to_py(py, p.span)?;
             let date = spanned_str_to_py(py, p.date, file)?;
             let currency = spanned_str_to_py(py, p.currency, file)?;
@@ -1119,7 +1060,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyPrice {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1131,7 +1071,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Event(e) => {
-            let meta = meta_to_py(py, e.meta)?;
             let span = span_to_py(py, e.span)?;
             let date = spanned_str_to_py(py, e.date, file)?;
             let event_type = spanned_str_to_py(py, e.event_type, file)?;
@@ -1146,7 +1085,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyEvent {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1158,7 +1096,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Query(q) => {
-            let meta = meta_to_py(py, q.meta)?;
             let span = span_to_py(py, q.span)?;
             let date = spanned_str_to_py(py, q.date, file)?;
             let name = spanned_str_to_py(py, q.name, file)?;
@@ -1173,7 +1110,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyQuery {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1185,7 +1121,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Note(n) => {
-            let meta = meta_to_py(py, n.meta)?;
             let span = span_to_py(py, n.span)?;
             let date = spanned_str_to_py(py, n.date, file)?;
             let account = spanned_str_to_py(py, n.account, file)?;
@@ -1200,7 +1135,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyNote {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1212,7 +1146,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Document(d) => {
-            let meta = meta_to_py(py, d.meta)?;
             let span = span_to_py(py, d.span)?;
             let date = spanned_str_to_py(py, d.date, file)?;
             let account = spanned_str_to_py(py, d.account, file)?;
@@ -1241,7 +1174,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyDocument {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1256,7 +1188,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Custom(c) => {
-            let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
             let date = spanned_str_to_py(py, c.date, file)?;
             let name = spanned_str_to_py(py, c.name, file)?;
@@ -1275,7 +1206,6 @@ fn directive_to_py(
                 .map(|kv| key_value_to_py(py, kv, file))
                 .collect::<PyResult<Vec<_>>>()?;
             PyCustom {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 date,
@@ -1287,12 +1217,10 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Option(o) => {
-            let meta = meta_to_py(py, o.meta)?;
             let span = span_to_py(py, o.span)?;
             let key = spanned_str_to_py(py, o.key, file)?;
             let value = spanned_str_to_py(py, o.value, file)?;
             PyOption {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 key,
@@ -1301,11 +1229,9 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Include(i) => {
-            let meta = meta_to_py(py, i.meta)?;
             let span = span_to_py(py, i.span)?;
             let filename = spanned_str_to_py(py, i.filename, file)?;
             PyInclude {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 filename,
@@ -1313,7 +1239,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Plugin(p) => {
-            let meta = meta_to_py(py, p.meta)?;
             let span = span_to_py(py, p.span)?;
             let name = spanned_str_to_py(py, p.name, file)?;
             let config = match p.config {
@@ -1321,7 +1246,6 @@ fn directive_to_py(
                 None => None,
             };
             PyPlugin {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 name,
@@ -1330,11 +1254,9 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::PushTag(t) => {
-            let meta = meta_to_py(py, t.meta)?;
             let span = span_to_py(py, t.span)?;
             let tag = spanned_str_to_py(py, t.tag, file)?;
             PyTagDirective {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 tag,
@@ -1343,11 +1265,9 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::PopTag(t) => {
-            let meta = meta_to_py(py, t.meta)?;
             let span = span_to_py(py, t.span)?;
             let tag = spanned_str_to_py(py, t.tag, file)?;
             PyTagDirective {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 tag,
@@ -1356,7 +1276,6 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::PushMeta(pm) => {
-            let meta = meta_to_py(py, pm.meta)?;
             let span = span_to_py(py, pm.span)?;
             let key = spanned_str_to_py(py, pm.key, file)?;
             let value = match pm.value {
@@ -1364,7 +1283,6 @@ fn directive_to_py(
                 None => None,
             };
             PyPushMeta {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 key,
@@ -1373,11 +1291,9 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::PopMeta(pm) => {
-            let meta = meta_to_py(py, pm.meta)?;
             let span = span_to_py(py, pm.span)?;
             let key = spanned_str_to_py(py, pm.key, file)?;
             PyPopMeta {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 key,
@@ -1385,11 +1301,9 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Comment(c) => {
-            let meta = meta_to_py(py, c.meta)?;
             let span = span_to_py(py, c.span)?;
             let text = spanned_str_to_py(py, c.text, file)?;
             PyComment {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 text,
@@ -1397,11 +1311,9 @@ fn directive_to_py(
             .into_py_any(py)?
         }
         ast::Directive::Headline(h) => {
-            let meta = meta_to_py(py, h.meta)?;
             let span = span_to_py(py, h.span)?;
             let text = spanned_str_to_py(py, h.text, file)?;
             PyHeadline {
-                meta,
                 span,
                 file: file.clone_ref(py),
                 text,

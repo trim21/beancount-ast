@@ -20,7 +20,6 @@ __all__ = [
     "Include",
     "KeyValue",
     "KeyValueValue",
-    "Meta",
     "Note",
     "NumberExpr",
     "Open",
@@ -66,8 +65,6 @@ class Amount:
 @typing.final
 class Balance(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -88,8 +85,6 @@ class Balance(Directive):
 @typing.final
 class Close(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -106,8 +101,6 @@ class Close(Directive):
 @typing.final
 class Comment(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -117,8 +110,6 @@ class Comment(Directive):
 
 @typing.final
 class Commodity(Directive):
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property
@@ -161,8 +152,6 @@ class CostSpec:
 @typing.final
 class Custom(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -193,8 +182,6 @@ class CustomValue:
 @typing.final
 class Document(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -219,8 +206,6 @@ class Document(Directive):
 @typing.final
 class Event(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -239,8 +224,6 @@ class Event(Directive):
 @typing.final
 class Headline(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -251,8 +234,6 @@ class Headline(Directive):
 @typing.final
 class Include(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -262,8 +243,6 @@ class Include(Directive):
 
 @typing.final
 class KeyValue:
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property
@@ -284,18 +263,8 @@ class KeyValueValue:
     def boolean(self) -> bool | None: ...
 
 @typing.final
-class Meta:
-    @property
-    def filename(self) -> str: ...
-    @property
-    def line(self) -> int: ...
-    @property
-    def column(self) -> int: ...
-
 @typing.final
 class Note(Directive):
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property
@@ -333,8 +302,6 @@ class NumberExpr:
 @typing.final
 class Open(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -355,8 +322,6 @@ class Open(Directive):
 @typing.final
 class Option(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -368,8 +333,6 @@ class Option(Directive):
 
 @typing.final
 class Pad(Directive):
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property
@@ -389,8 +352,6 @@ class Pad(Directive):
 @typing.final
 class Plugin(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -403,8 +364,6 @@ class Plugin(Directive):
 @typing.final
 class PopMeta(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -414,8 +373,6 @@ class PopMeta(Directive):
 
 @typing.final
 class Posting:
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property
@@ -441,8 +398,6 @@ class Posting:
 @typing.final
 class Price(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -461,8 +416,6 @@ class Price(Directive):
 @typing.final
 class PushMeta(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -474,8 +427,6 @@ class PushMeta(Directive):
 
 @typing.final
 class Query(Directive):
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property
@@ -552,8 +503,6 @@ class SpannedStr:
 @typing.final
 class Tag(Directive):
     @property
-    def meta(self) -> Meta: ...
-    @property
     def span(self) -> Span: ...
     @property
     def file(self) -> File: ...
@@ -565,8 +514,6 @@ class Tag(Directive):
 
 @typing.final
 class Transaction(Directive):
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property

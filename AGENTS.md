@@ -27,7 +27,7 @@
 - Avoid `unwrap()` / `expect()` / `unwrap_of_default()`; the crate denies them (`src/lib.rs` has `#![deny(clippy::unwrap_used, clippy::expect_used)]`), the error should be propagated to caller.
 - Python-facing data structures are thin, mostly immutable “record” types:
   - Define a `Py*` struct with `#[pyclass(..., get_all)]` and `pyderive` derives (`PyNew`, `PyRepr`, `PyStr`, and sometimes `PyEq`).
-  - If the type should appear in stubs, add `#[cfg_attr(feature = "stub-gen", ...gen_stub_pyclass)]`.
+  - when you update rust code, you should also update type stub.
 - When adding a new directive/type:
   1) Add the `Py*` struct.
   2) Register it in the `_ast` module init.
