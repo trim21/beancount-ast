@@ -1,7 +1,4 @@
 # serializer version: 1
-# name: test_parse_string_error_snapshot
-  'bad.bean:1:1: unexpected node `ERROR`'
-# ---
 # name: test_parse_string_mixed_directives_snapshot
   list([
     tuple(
@@ -10,10 +7,7 @@
     ),
     tuple(
       'Option',
-      '''
-        option "title" "Demo"
-  
-      ''',
+      'option "title" "Demo"',
     ),
     tuple(
       'Open',
@@ -77,17 +71,11 @@
     ),
     tuple(
       'Plugin',
-      '''
-        plugin "beancount.plugins.auto_accounts"
-  
-      ''',
+      'plugin "beancount.plugins.auto_accounts"',
     ),
     tuple(
       'Include',
-      '''
-        include "other.bean"
-  
-      ''',
+      'include "other.bean"',
     ),
     tuple(
       'Close',

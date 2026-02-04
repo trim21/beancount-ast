@@ -11,7 +11,6 @@ from beancount_ast._ast import (
     File,
     Headline,
     Include,
-    Meta,
     Note,
     Open,
     Option,
@@ -21,6 +20,7 @@ from beancount_ast._ast import (
     Price,
     PushMeta,
     Query,
+    Raw,
     Span,
     Tag,
     Transaction,
@@ -28,8 +28,6 @@ from beancount_ast._ast import (
 
 
 class Directive(abc.ABC):
-    @property
-    def meta(self) -> Meta: ...
     @property
     def span(self) -> Span: ...
     @property
@@ -57,3 +55,4 @@ Directive.register(PushMeta)
 Directive.register(PopMeta)
 Directive.register(Comment)
 Directive.register(Headline)
+Directive.register(Raw)
