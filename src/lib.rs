@@ -78,7 +78,7 @@ impl fmt::Debug for PyFile {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, Hash, PyNew, PyRepr, PyStr, PyEq)]
+#[derive(PartialEq, Eq, Hash, PyNew, PyRepr, PyStr, PyEq)]
 #[pyclass(module = "beancount_ast._ast", name = "Span", get_all)]
 struct PySpan {
     start: usize,
