@@ -52,6 +52,7 @@ fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPopMeta>()?;
     m.add_class::<PyComment>()?;
     m.add_class::<PyHeadline>()?;
+    m.add_class::<PyRaw>()?;
 
     // API
     m.add_function(wrap_pyfunction!(parse_string, m)?)?;
@@ -264,11 +265,10 @@ struct PyTransaction {
     txn: Option<Py<PySpannedStr>>,
     payee: Option<Py<PySpannedStr>>,
     narration: Option<Py<PySpannedStr>>,
-    tags_links: Option<Py<PySpannedStr>>,
+    tags_links: Option<Vec<Py<PySpannedStr>>>,
     tags: Vec<Py<PySpannedStr>>,
     links: Vec<Py<PySpannedStr>>,
     comment: Option<Py<PySpannedStr>>,
-    tags_links_lines: Vec<Py<PySpannedStr>>,
     comments: Vec<Py<PySpannedStr>>,
     key_values: Vec<Py<PyKeyValue>>,
     postings: Vec<Py<PyPosting>>,
@@ -341,7 +341,7 @@ struct PyDocument {
     date: Py<PySpannedStr>,
     account: Py<PySpannedStr>,
     filename: Py<PySpannedStr>,
-    tags_links: Option<Py<PySpannedStr>>,
+    tags_links: Option<Vec<Py<PySpannedStr>>>,
     tags: Vec<Py<PySpannedStr>>,
     links: Vec<Py<PySpannedStr>>,
     comment: Option<Py<PySpannedStr>>,
@@ -426,6 +426,14 @@ struct PyHeadline {
     span: Py<PySpan>,
     file: Py<PyFile>,
     text: Py<PySpannedStr>,
+}
+
+#[derive(PyNew, PyRepr, PyStr)]
+#[pyclass(module = "beancount_ast._ast", name = "Raw", get_all)]
+struct PyRaw {
+    span: Py<PySpan>,
+    file: Py<PyFile>,
+    text: String,
 }
 
 // --- Conversions ---
@@ -966,7 +974,12 @@ fn directive_to_py(
                 None => None,
             };
             let tags_links = match t.tags_links {
-                Some(v) => Some(spanned_str_to_py(py, v, file)?),
+                Some(values) => Some(
+                    values
+                        .into_iter()
+                        .map(|s| spanned_str_to_py(py, s, file))
+                        .collect::<PyResult<Vec<_>>>()?,
+                ),
                 None => None,
             };
             let tags = t
@@ -983,11 +996,6 @@ fn directive_to_py(
                 Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
-            let tags_links_lines = t
-                .tags_links_lines
-                .into_iter()
-                .map(|s| spanned_str_to_py(py, s, file))
-                .collect::<PyResult<Vec<_>>>()?;
             let comments = t
                 .comments
                 .into_iter()
@@ -1015,7 +1023,6 @@ fn directive_to_py(
                 tags,
                 links,
                 comment,
-                tags_links_lines,
                 comments,
                 key_values,
                 postings,
@@ -1151,7 +1158,12 @@ fn directive_to_py(
             let account = spanned_str_to_py(py, d.account, file)?;
             let filename = spanned_str_to_py(py, d.filename, file)?;
             let tags_links = match d.tags_links {
-                Some(v) => Some(spanned_str_to_py(py, v, file)?),
+                Some(values) => Some(
+                    values
+                        .into_iter()
+                        .map(|s| spanned_str_to_py(py, s, file))
+                        .collect::<PyResult<Vec<_>>>()?,
+                ),
                 None => None,
             };
             let tags = d
@@ -1320,6 +1332,15 @@ fn directive_to_py(
             }
             .into_py_any(py)?
         }
+        ast::Directive::Raw(r) => {
+            let span = span_to_py(py, r.span)?;
+            PyRaw {
+                span,
+                file: file.clone_ref(py),
+                text: r.text.to_owned(),
+            }
+            .into_py_any(py)?
+        }
     };
 
     Ok(obj)
@@ -1399,6 +1420,7 @@ impl_dump_via_span_field!(
     PyPopMeta,
     PyComment,
     PyHeadline,
+    PyRaw,
     PySpannedPriceOperator,
 );
 

@@ -20,6 +20,7 @@ from beancount_ast._ast import (
     Price,
     PushMeta,
     Query,
+    Raw,
     Span,
     Tag,
     Transaction,
@@ -54,3 +55,4 @@ Directive.register(PushMeta)
 Directive.register(PopMeta)
 Directive.register(Comment)
 Directive.register(Headline)
+Directive.register(Raw)
