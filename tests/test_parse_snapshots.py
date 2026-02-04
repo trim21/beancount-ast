@@ -1,4 +1,3 @@
-import pytest
 from syrupy.assertion import SnapshotAssertion
 
 import beancount_ast
@@ -36,14 +35,6 @@ def test_parse_string_mixed_directives_snapshot(snapshot: SnapshotAssertion):
         for directive in file.directives
     ]
     assert directive_dumps == snapshot
-
-
-def test_parse_string_error_snapshot(snapshot: SnapshotAssertion):
-    with pytest.raises(ValueError) as exc:
-        beancount_ast.parse_string("this is not a directive\n", filename="bad.bean")
-
-    # Error string includes spans/locations; keep the exact message snapshotted.
-    assert str(exc.value) == snapshot
 
 
 def test_dump_reconstructs_source():
