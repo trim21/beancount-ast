@@ -7,7 +7,7 @@ name = "beancount_ast"
 description = "Parse Beancount content into AST"
 readme = "README.md"
 requires-python = ">=3.10"
-version = '0.0.1a4'
+version = '0.0.1a5'
 dependencies = []
 
 [tool.pytest.ini_options]
