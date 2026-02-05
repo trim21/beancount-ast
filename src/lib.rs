@@ -2,7 +2,6 @@
 #![deny(clippy::unwrap_used, clippy::expect_used)]
 
 use beancount_parser::ast;
-use beancount_parser::parse_str;
 use beancount_parser::parse_str_strict;
 use pyderive::*;
 use pyo3::IntoPyObjectExt;
@@ -1526,7 +1525,7 @@ fn parse_string(py: Python<'_>, content: &str, filename: &str) -> PyResult<Py<Py
                     },
                 )?);
             }
-            let error_list = PyList::new_bound(py, &error_items);
+            let error_list = PyList::new(py, &error_items)?;
             let message = format!(
                 "parse failed with {} error(s) in {}",
                 error_items.len(),
