@@ -12,7 +12,7 @@ description = "Python bindings for the beancount-parser directive AST."
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-beancount-parser = { git = "https://github.com/trim21/beancount.git", rev = "59e4ebee321ec657dc04e10e94641f702dc5207f", features = ["rich-errors"] }
+beancount-parser = { git = "https://github.com/trim21/beancount.git", rev = "70c986d417ba320486b5eb6efaea9d82821620c4", features = ["rich-errors"] }
 pyderive = "0.9.2"
 pyo3 = { version = "0.28.0", features = ["abi3-py310", "multiple-pymethods", "generate-import-lib"] }
 
