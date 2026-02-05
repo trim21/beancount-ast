@@ -2,18 +2,23 @@
 #![deny(clippy::unwrap_used, clippy::expect_used)]
 
 use beancount_parser::ast;
-use beancount_parser::parse_str;
+use beancount_parser::parse_str_strict;
 use pyderive::*;
 use pyo3::IntoPyObjectExt;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+use pyo3::types::PyList;
 use pyo3::types::PyModule;
 use std::fmt;
 
+pyo3::create_exception!(beancount_ast._ast, ParseError, PyValueError);
+
 #[pymodule(name = "_ast")]
 fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add("ParseError", _py.get_type::<ParseError>())?;
     // File container
     m.add_class::<PyFile>()?;
+    m.add_class::<PyParseErrorDetail>()?;
 
     // Core building blocks
     m.add_class::<PySpan>()?;
@@ -58,6 +63,22 @@ fn _ast(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(parse_string, m)?)?;
     m.add_function(wrap_pyfunction!(parse_file, m)?)?;
     Ok(())
+}
+
+#[derive(PyNew, PyRepr, PyStr)]
+#[pyclass(module = "beancount_ast._ast", name = "ParseErrorDetail", get_all)]
+struct PyParseErrorDetail {
+    filename: String,
+    message: String,
+    span: Py<PySpan>,
+    start: usize,
+    end: usize,
+    start_line: usize,
+    start_col: usize,
+    end_line: usize,
+    end_col: usize,
+    expected: Vec<String>,
+    found: Option<String>,
 }
 
 #[derive(PyNew, PyRepr, PyStr)]
@@ -269,7 +290,6 @@ struct PyTransaction {
     tags: Vec<Py<PySpannedStr>>,
     links: Vec<Py<PySpannedStr>>,
     comment: Option<Py<PySpannedStr>>,
-    comments: Vec<Py<PySpannedStr>>,
     key_values: Vec<Py<PyKeyValue>>,
     postings: Vec<Py<PyPosting>>,
 }
@@ -996,11 +1016,6 @@ fn directive_to_py(
                 Some(v) => Some(spanned_str_to_py(py, v, file)?),
                 None => None,
             };
-            let comments = t
-                .comments
-                .into_iter()
-                .map(|s| spanned_str_to_py(py, s, file))
-                .collect::<PyResult<Vec<_>>>()?;
             let key_values = t
                 .key_values
                 .into_iter()
@@ -1023,7 +1038,6 @@ fn directive_to_py(
                 tags,
                 links,
                 comment,
-                comments,
                 key_values,
                 postings,
             }
@@ -1378,6 +1392,27 @@ fn dump_span_from_file(py: Python<'_>, file: &Py<PyFile>, span: &PySpan) -> PyRe
     slice_by_span(&file_borrow.content, span.start, span.end)
 }
 
+fn span_from_offsets(py: Python<'_>, start: usize, end: usize) -> PyResult<Py<PySpan>> {
+    Py::new(py, PySpan { start, end })
+}
+
+fn offset_to_line_col(source: &str, offset: usize) -> (usize, usize) {
+    let mut line = 1usize;
+    let mut col = 1usize;
+    for (idx, ch) in source.char_indices() {
+        if idx >= offset {
+            break;
+        }
+        if ch == '\n' {
+            line += 1;
+            col = 1;
+        } else {
+            col += 1;
+        }
+    }
+    (line, col)
+}
+
 macro_rules! impl_dump_via_span_field {
     ($($ty:ident),* $(,)?) => {
         $(
@@ -1458,8 +1493,50 @@ impl PyCustomValue {
 #[pyfunction]
 #[pyo3(signature = (content, filename = "<string>"))]
 fn parse_string(py: Python<'_>, content: &str, filename: &str) -> PyResult<Py<PyFile>> {
-    let directives =
-        parse_str(content, filename).map_err(|err| PyValueError::new_err(err.to_string()))?;
+    let directives = match parse_str_strict(content) {
+        Ok(directives) => directives,
+        Err(errors) => {
+            let mut error_items: Vec<Py<PyParseErrorDetail>> = Vec::with_capacity(errors.len());
+            for err in errors {
+                let span = err.span();
+                let (start_line, start_col) = offset_to_line_col(content, span.start);
+                let (end_line, end_col) = offset_to_line_col(content, span.end);
+                let expected = err
+                    .expected()
+                    .map(|pat| pat.to_string())
+                    .collect::<Vec<_>>();
+                let found = err.found().map(|tok| tok.to_string());
+
+                let span_py = span_from_offsets(py, span.start, span.end)?;
+                error_items.push(Py::new(
+                    py,
+                    PyParseErrorDetail {
+                        filename: filename.to_owned(),
+                        message: err.to_string(),
+                        span: span_py,
+                        start: span.start,
+                        end: span.end,
+                        start_line,
+                        start_col,
+                        end_line,
+                        end_col,
+                        expected,
+                        found,
+                    },
+                )?);
+            }
+            let error_list = PyList::new(py, &error_items)?;
+            let message = format!(
+                "parse failed with {} error(s) in {}",
+                error_items.len(),
+                filename
+            );
+            let err = PyErr::new::<ParseError, _>(message);
+            err.value(py).setattr("errors", error_list)?;
+            err.value(py).setattr("filename", filename)?;
+            return Err(err);
+        }
+    };
 
     let file = Py::new(
         py,
