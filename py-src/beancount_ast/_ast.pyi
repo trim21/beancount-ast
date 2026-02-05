@@ -26,6 +26,8 @@ __all__ = [
     "Open",
     "Option",
     "Pad",
+    "ParseError",
+    "ParseErrorDetail",
     "Plugin",
     "PopMeta",
     "Posting",
@@ -43,6 +45,35 @@ __all__ = [
     "parse_file",
     "parse_string",
 ]
+
+class ParseError(ValueError):
+    errors: list[ParseErrorDetail]
+    filename: str
+
+@typing.final
+class ParseErrorDetail:
+    @property
+    def filename(self) -> str: ...
+    @property
+    def message(self) -> str: ...
+    @property
+    def span(self) -> Span: ...
+    @property
+    def start(self) -> int: ...
+    @property
+    def end(self) -> int: ...
+    @property
+    def start_line(self) -> int: ...
+    @property
+    def start_col(self) -> int: ...
+    @property
+    def end_line(self) -> int: ...
+    @property
+    def end_col(self) -> int: ...
+    @property
+    def expected(self) -> list[str]: ...
+    @property
+    def found(self) -> str | None: ...
 
 @typing.final
 class File:
@@ -545,8 +576,6 @@ class Transaction(Directive):
     def links(self) -> list[SpannedStr]: ...
     @property
     def comment(self) -> SpannedStr | None: ...
-    @property
-    def comments(self) -> list[SpannedStr]: ...
     @property
     def key_values(self) -> list[KeyValue]: ...
     @property
