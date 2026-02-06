@@ -10,6 +10,14 @@ description = "Parse Beancount content into AST"
 authors = [{ name = "trim21", email = 'trim21.me@gmail.com"' }]
 readme = "README.md"
 license = "MIT"
+classifiers = [
+  "Programming Language :: Rust",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+]
+
 dependencies = []
 
 [project.urls]
