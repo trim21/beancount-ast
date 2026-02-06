@@ -4,11 +4,17 @@ build-backend = "maturin"
 
 [project]
 name = "beancount_ast"
-description = "Parse Beancount content into AST"
-readme = "README.md"
-requires-python = ">=3.10"
 version = '0.0.1a6'
+requires-python = ">=3.10"
+description = "Parse Beancount content into AST"
+authors = [{ name = "trim21", email = 'trim21.me@gmail.com"' }]
+readme = "README.md"
+license = "MIT"
 dependencies = []
+
+[project.urls]
+homepage = "https://github.com/trim21/beancount-ast"
+repository = "https://github.com/trim21/beancount-ast"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

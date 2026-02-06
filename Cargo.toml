@@ -1,12 +1,8 @@
 [package]
 name = "beancount-ast-py"
 version = '0.0.0'
-authors = ["Trim21 <trim21.me@gmail.com>"]
 edition = "2024"
-homepage = "https://github.com/trim21/beancount-ast"
 license = "MIT"
-repository = "https://github.com/trim21/beancount-ast"
-description = "Python bindings for the beancount-parser directive AST."
 
 [lib]
 crate-type = ["cdylib", "rlib"]
