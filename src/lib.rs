@@ -2,7 +2,7 @@
 #![deny(clippy::unwrap_used, clippy::expect_used)]
 
 use beancount_parser::ast;
-use beancount_parser::parse_str_strict;
+use beancount_parser::parse_strict;
 use pyderive::*;
 use pyo3::IntoPyObjectExt;
 use pyo3::exceptions::PyValueError;
@@ -1501,7 +1501,7 @@ impl PyCustomValue {
 #[pyfunction]
 #[pyo3(signature = (content, filename = "<string>"))]
 fn parse_string(py: Python<'_>, content: &str, filename: &str) -> PyResult<Py<PyFile>> {
-  let directives = match parse_str_strict(content) {
+  let directives = match parse_strict(content) {
     Ok(directives) => directives,
     Err(errors) => {
       let mut error_items: Vec<Py<PyParseErrorDetail>> =
