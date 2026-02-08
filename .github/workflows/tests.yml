@@ -22,7 +22,7 @@ jobs:
   build-wheel:
     uses: ./.github/workflows/_build_wheels.yaml
 
-  tests:
+  python-tests-matrix:
     name: Tests (wheel install)
     needs:
       - build-wheel
@@ -69,3 +69,10 @@ jobs:
         run: uv pip install beancount-ast --no-index --find-links ./dist/
 
       - run: pytest
+
+  python-tests:
+    needs:
+      - python-tests-matrix
+    runs-on: ubuntu-slim
+    steps:
+      - run: echo 1
