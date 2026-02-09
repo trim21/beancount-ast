@@ -8,7 +8,7 @@ license = "MIT"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-beancount-parser = { git = "https://github.com/trim21/beancount.git", rev = "a6682bbe95711ef6c1b1aa76117415bf824a320f" }
+beancount-parser = { git = "https://github.com/trim21/beancount.git", rev = "3ae5a0620807a313f0d989a1992d880b842e0d77" }
 pyderive = "0.9.2"
 pyo3 = { version = "0.28.0", features = ["abi3-py310", "multiple-pymethods", "generate-import-lib"] }
 
