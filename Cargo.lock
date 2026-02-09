@@ -77,13 +77,12 @@ dependencies = [
 [[package]]
 name = "beancount-parser"
 version = "3.3.0-alpha.0"
-source = "git+https://github.com/trim21/beancount.git?rev=a6682bbe95711ef6c1b1aa76117415bf824a320f#a6682bbe95711ef6c1b1aa76117415bf824a320f"
+source = "git+https://github.com/trim21/beancount.git?rev=3ae5a0620807a313f0d989a1992d880b842e0d77#3ae5a0620807a313f0d989a1992d880b842e0d77"
 dependencies = [
  "anyhow",
  "ariadne",
  "chrono",
  "chumsky",
- "path-clean",
  "ropey",
  "rust_decimal",
  "serde_json",
@@ -341,12 +340,6 @@ name = "once_cell"
 version = "1.21.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
-
-[[package]]
-name = "path-clean"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17359afc20d7ab31fdb42bb844c8b3bb1dabd7dcf7e68428492da7f16966fcef"
 
 [[package]]
 name = "portable-atomic"
