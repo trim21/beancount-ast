@@ -10,7 +10,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 beancount-parser = { git = "https://github.com/trim21/beancount.git", rev = "50f898fe1636efa1a59222c70fa0e288f442cc08" }
 pyderive = "0.9.2"
-pyo3 = { version = "0.28.1", features = ["abi3-py310", "multiple-pymethods", "generate-import-lib"] }
+pyo3 = { version = "0.28.2", features = ["abi3-py310", "multiple-pymethods", "generate-import-lib"] }
 
 [features]
 default = []
