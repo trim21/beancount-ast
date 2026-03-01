@@ -91,3 +91,17 @@ def test_indent2():
 
     file = beancount_ast.parse_string(content, filename="mixed.bean")
     assert "\n".join([r.dump() for r in file.directives]).strip() == content
+
+
+def test_repr_does_not_recurse_through_file_directives_cycle():
+    file = beancount_ast.parse_string(
+        "2020-01-01 open Assets:Cash USD\n", filename="repr.bean"
+    )
+
+    file_repr = repr(file)
+    assert "File" in file_repr
+    assert "directives: <directives" in file_repr
+
+    directive_repr = repr(file.directives[0])
+    assert "File" in directive_repr
+    assert "directives: <directives" in directive_repr

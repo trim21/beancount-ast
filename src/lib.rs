@@ -81,7 +81,17 @@ struct PyParseErrorDetail {
   found: Option<String>,
 }
 
-#[derive(PyNew, PyRepr, PyStr)]
+struct RawDebugStr {
+  name: &'static str,
+  size: usize,
+}
+impl fmt::Debug for RawDebugStr {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "<{} len={}>", self.name, &self.size)
+  }
+}
+
+#[derive(PyNew)]
 #[pyclass(module = "beancount_ast._ast", name = "File", get_all)]
 struct PyFile {
   filename: String,
@@ -93,9 +103,32 @@ impl fmt::Debug for PyFile {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     f.debug_struct("File")
       .field("filename", &self.filename)
-      .field("content_len", &self.content.len())
-      .field("directives_len", &self.directives.len())
+      .field(
+        "content",
+        &RawDebugStr {
+          name: "string",
+          size: self.content.len(),
+        },
+      )
+      .field(
+        "directives",
+        &RawDebugStr {
+          name: "directives",
+          size: self.directives.len(),
+        },
+      )
       .finish()
+  }
+}
+
+#[pymethods]
+impl PyFile {
+  fn __repr__(&self) -> String {
+    format!("{:?}", self)
+  }
+
+  fn __str__(&self) -> String {
+    self.__repr__()
   }
 }
 

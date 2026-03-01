@@ -36,7 +36,6 @@ manifest-path = "Cargo.toml"
 module-name = "beancount_ast._ast"
 bindings = "pyo3"
 python-source = "py-src"
-strip = true
 
 [dependency-groups]
 dev = ["syrupy>=5.1.0", "pytest>=9.0.2"]

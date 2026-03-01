@@ -55,6 +55,9 @@ jobs:
           merge-multiple: true
           path: dist
 
+      - run: ls -ahl dist
+        shell: bash
+
       - uses: actions/setup-python@v6
         with:
           python-version: '${{ matrix.python }}'
