@@ -4,6 +4,7 @@
 *.pyc
 *.so
 *.pyd
+*.pdb
 *.swp
 *~
 .cache
