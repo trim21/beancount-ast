@@ -60,7 +60,6 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist
-          manylinux: '2_17'
 
       - run: ls -ahl dist
         shell: bash
