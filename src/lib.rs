@@ -71,7 +71,8 @@ struct PyParseErrorDetail {
   filename: String,
   message: String,
   span: Py<PySpan>,
-  start: usize,
+  start: usiz
+  e,
   end: usize,
   start_line: usize,
   start_col: usize,
@@ -93,8 +94,8 @@ impl fmt::Debug for PyFile {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     f.debug_struct("File")
       .field("filename", &self.filename)
-      .field("content_len", &self.content.len())
-      .field("directives_len", &self.directives.len())
+      .field("content", &format!("<string len={}>",&self.content.len()).as_str())
+      .field("directives", &format!("<directives len={}>",&self.content.len()).as_str())
       .finish()
   }
 }
