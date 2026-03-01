@@ -71,8 +71,7 @@ struct PyParseErrorDetail {
   filename: String,
   message: String,
   span: Py<PySpan>,
-  start: usiz
-  e,
+  start: usize,
   end: usize,
   start_line: usize,
   start_col: usize,
@@ -80,6 +79,15 @@ struct PyParseErrorDetail {
   end_col: usize,
   expected: Vec<String>,
   found: Option<String>,
+}
+
+struct RawDebugStr {
+  s: String,
+}
+impl fmt::Debug for RawDebugStr {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    f.write_str(self.s.as_str())
+  }
 }
 
 #[derive(PyNew)]
@@ -94,8 +102,18 @@ impl fmt::Debug for PyFile {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     f.debug_struct("File")
       .field("filename", &self.filename)
-      .field("content", &format!("<string len={}>",&self.content.len()).as_str())
-      .field("directives", &format!("<directives len={}>",&self.content.len()).as_str())
+      .field(
+        "content",
+        &RawDebugStr {
+          s: format!("<string len={}>", &self.content.len()),
+        },
+      )
+      .field(
+        "directives",
+        &RawDebugStr {
+          s: format!("<directives len={}>", &self.directives.len()),
+        },
+      )
       .finish()
   }
 }
