@@ -100,8 +100,8 @@ def test_repr_does_not_recurse_through_file_directives_cycle():
 
     file_repr = repr(file)
     assert "File" in file_repr
-    assert "directives_len: 1" in file_repr
+    assert "directives: <directives" in file_repr
 
     directive_repr = repr(file.directives[0])
     assert "File" in directive_repr
-    assert "directives_len: 1" in directive_repr
+    assert "directives: <directives" in directive_repr
