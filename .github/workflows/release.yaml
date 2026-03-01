@@ -20,7 +20,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@v7
         with:
-          name: wheel
+          pattern: wheel-*
+          merge-multiple: true
           path: dist
 
       - uses: astral-sh/setup-uv@v7
