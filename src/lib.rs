@@ -82,11 +82,12 @@ struct PyParseErrorDetail {
 }
 
 struct RawDebugStr {
-  s: String,
+  name: &'static str,
+  size: usize,
 }
 impl fmt::Debug for RawDebugStr {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    f.write_str(self.s.as_str())
+    f.write_fmt("<{} len={}>", self.name, &self.size)
   }
 }
 
@@ -105,13 +106,15 @@ impl fmt::Debug for PyFile {
       .field(
         "content",
         &RawDebugStr {
-          s: format!("<string len={}>", &self.content.len()),
+          name: "string",
+          size: self.content.len(),
         },
       )
       .field(
         "directives",
         &RawDebugStr {
-          s: format!("<directives len={}>", &self.directives.len()),
+          name: "directives",
+          size: self.directives.len(),
         },
       )
       .finish()
