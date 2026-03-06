@@ -21,7 +21,7 @@ repos:
         language: python
         # Optional extra validations from SchemaStore:
         additional_dependencies:
-          - 'validate-pyproject-schema-store[all]==2026.3.3'
+          - 'validate-pyproject-schema-store[all]==2026.3.6'
         args:
           - --disable
           - ruff
@@ -64,6 +64,6 @@ repos:
         args: [--fix]
 
   - repo: https://github.com/psf/black
-    rev: '26.1.0'
+    rev: '26.3.0'
     hooks:
       - id: black
