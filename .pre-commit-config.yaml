@@ -21,7 +21,7 @@ repos:
         language: python
         # Optional extra validations from SchemaStore:
         additional_dependencies:
-          - 'validate-pyproject-schema-store[all]==2026.3.10'
+          - 'validate-pyproject-schema-store[all]==2026.3.12'
         args:
           - --disable
           - ruff
@@ -50,7 +50,7 @@ repos:
         exclude: '.*\.bin'
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v22.1.0
+    rev: v22.1.1
     hooks:
       - id: clang-format
         types_or: [c++, c, cuda]
