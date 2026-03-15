@@ -2,7 +2,7 @@ exclude: '.*/__snapshots__/.*'
 
 repos:
   - repo: https://github.com/trim21/pre-commit-mirror-meson
-    rev: 'v1.10.1'
+    rev: 'v1.10.2'
     hooks:
       - id: meson-fmt
         args: ['--inplace', '--editor-config']
