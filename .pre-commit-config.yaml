@@ -2,7 +2,7 @@ exclude: '.*/__snapshots__/.*'
 
 repos:
   - repo: https://github.com/trim21/pre-commit-mirror-meson
-    rev: 'v1.11.0'
+    rev: 'v1.11.1'
     hooks:
       - id: meson-fmt
         args: ['--inplace', '--editor-config']
@@ -21,7 +21,7 @@ repos:
         language: python
         # Optional extra validations from SchemaStore:
         additional_dependencies:
-          - 'validate-pyproject-schema-store[all]==2026.4.20'
+          - 'validate-pyproject-schema-store[all]==2026.4.21'
         args:
           - --disable
           - ruff
