@@ -21,7 +21,7 @@ repos:
         language: python
         # Optional extra validations from SchemaStore:
         additional_dependencies:
-          - 'validate-pyproject-schema-store[all]==2026.5.28'
+          - 'validate-pyproject-schema-store[all]==2026.6.11'
         args:
           - --disable
           - ruff
