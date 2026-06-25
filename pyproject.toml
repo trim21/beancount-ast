@@ -38,4 +38,4 @@ bindings = "pyo3"
 python-source = "py-src"
 
 [dependency-groups]
-dev = ["syrupy>=5.3.2", "pytest>=9.1.1"]
+dev = ["syrupy>=5.3.3", "pytest>=9.1.1"]
