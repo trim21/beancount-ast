@@ -87,7 +87,7 @@ struct RawDebugStr {
 }
 impl fmt::Debug for RawDebugStr {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "<{} len={}>", self.name, &self.size)
+    write!(f, "<{} len={}>", self.name, self.size)
   }
 }
 
