@@ -58,7 +58,7 @@ jobs:
       - run: ls -ahl dist
         shell: bash
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '${{ matrix.python }}'
 
