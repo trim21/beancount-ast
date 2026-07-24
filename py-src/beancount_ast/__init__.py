@@ -12,7 +12,6 @@ from ._ast import (
     Event,
     File,
     Headline,
-    Raw,
     Include,
     KeyValue,
     KeyValueValue,
@@ -29,6 +28,7 @@ from ._ast import (
     Price,
     PushMeta,
     Query,
+    Raw,
     Span,
     SpannedBinaryOp,
     SpannedBool,
@@ -40,7 +40,6 @@ from ._ast import (
     parse_file,
     parse_string,
 )
-
 from ._directive import Directive
 
 __all__ = [
@@ -58,7 +57,6 @@ __all__ = [
     "Event",
     "File",
     "Headline",
-    "Raw",
     "Include",
     "KeyValue",
     "KeyValueValue",
@@ -75,6 +73,7 @@ __all__ = [
     "Price",
     "PushMeta",
     "Query",
+    "Raw",
     "Span",
     "SpannedBinaryOp",
     "SpannedBool",
