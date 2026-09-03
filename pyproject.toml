@@ -41,4 +41,4 @@ python-source = "py-src"
 known-first-party = ["beancount_ast"]
 
 [dependency-groups]
-dev = ["syrupy>=5.5.3", "pytest>=9.1.1"]
+dev = ["syrupy>=6.0.0", "pytest>=9.1.1"]
