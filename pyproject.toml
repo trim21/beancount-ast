@@ -42,7 +42,7 @@ known-first-party = ["beancount_ast"]
 
 [dependency-groups]
 dev = [
-  "syrupy==6.1.1; python_version < '3.11'",
+  "syrupy==7.0.0; python_version < '3.11'",
   "syrupy==7.0.0; python_version >= '3.11'",
   "pytest==9.2.0",
 ]
