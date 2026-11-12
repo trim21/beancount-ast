@@ -17,7 +17,7 @@ built with [PyO3](https://github.com/PyO3/pyo3) on top of the Rust
 - `dump()` reconstructs the original source text of any node.
 - Classes have a dataclass-like constructor and `repr` (via
   [`pyderive`](https://github.com/Progi-1984/pyderive)).
-- Fully typed with `py.typed` and stubs, requires Python 3.10+.
+- Fully typed with `py.typed` and stubs, requires Python 3.11+.
 
 ## Installation
 
