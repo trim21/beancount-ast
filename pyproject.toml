@@ -27,6 +27,7 @@ repository = "https://github.com/trim21/beancount-ast"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["-q"]
+cache_dir = ".venv/.cache/pytest"
 
 [tool.uv]
 package = false
@@ -36,6 +37,9 @@ manifest-path = "Cargo.toml"
 module-name = "beancount_ast._ast"
 bindings = "pyo3"
 python-source = "py-src"
+
+[tool.ruff]
+cache-dir = ".venv/.cache/ruff"
 
 [tool.ruff.lint.isort]
 known-first-party = ["beancount_ast"]
