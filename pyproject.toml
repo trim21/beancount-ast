@@ -5,7 +5,7 @@ build-backend = "maturin"
 [project]
 name = "beancount-ast"
 version = '0.0.2'
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 description = "Parse Beancount content into AST"
 authors = [{ name = "trim21", email = 'trim21.me@gmail.com"' }]
 readme = "README.md"
@@ -41,8 +41,4 @@ python-source = "py-src"
 known-first-party = ["beancount_ast"]
 
 [dependency-groups]
-dev = [
-  "syrupy==6.1.1; python_version < '3.11'",
-  "syrupy==7.0.0; python_version >= '3.11'",
-  "pytest==9.2.0",
-]
+dev = ["syrupy==7.0.0", "pytest==9.2.0"]
