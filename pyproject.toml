@@ -45,4 +45,4 @@ cache-dir = ".venv/.cache/ruff"
 known-first-party = ["beancount_ast"]
 
 [dependency-groups]
-dev = ["syrupy==7.0.0", "pytest==9.2.0"]
+dev = ["syrupy==7.0.1", "pytest==9.2.0"]
