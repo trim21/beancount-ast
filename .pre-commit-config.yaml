@@ -8,7 +8,7 @@ repos:
         args: ['--inplace', '--editor-config']
 
   - repo: https://github.com/trim21/dprint-pre-commit
-    rev: 'v0.64.3.0'
+    rev: 'v0.65.0.0'
     hooks:
       - id: dprint
         pass_filenames: false
@@ -21,7 +21,7 @@ repos:
         language: python
         # Optional extra validations from SchemaStore:
         additional_dependencies:
-          - 'validate-pyproject-schema-store[all]==2026.11.14'
+          - 'validate-pyproject-schema-store[all]==2026.11.17'
         args:
           - --disable
           - ruff
